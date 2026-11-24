@@ -1,0 +1,44 @@
+<Window x:Class="Launcher.Views.LoginWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="xHR - 登录" Height="540" Width="400"
+        WindowStartupLocation="CenterScreen"
+        Background="{StaticResource BgBrush}" Foreground="{StaticResource FgBrush}"
+        FontFamily="Microsoft YaHei UI" FontSize="13"
+        ResizeMode="NoResize">
+
+    <Grid Margin="40,36,40,30">
+        <StackPanel VerticalAlignment="Center">
+
+            <!-- Logo 与标题 -->
+            <StackPanel HorizontalAlignment="Center" Margin="0,0,0,32">
+                <Image Source="assets/logo.png" Width="48" Height="48" HorizontalAlignment="Center"
+                       RenderOptions.BitmapScalingMode="HighQuality"/>
+                <TextBlock Text="xHR" FontSize="24" FontWeight="Bold" Foreground="{StaticResource FgBrush}" HorizontalAlignment="Center" Margin="0,14,0,0"/>
+                <TextBlock Text="登录以继续" FontSize="12" Foreground="{StaticResource MutedBrush}" HorizontalAlignment="Center" Margin="0,6,0,0"/>
+            </StackPanel>
+
+            <!-- 错误提示 -->
+            <TextBlock x:Name="ErrorText" Foreground="{StaticResource DestructiveBrush}" FontSize="12" Margin="0,0,0,12"
+                       TextWrapping="Wrap" Visibility="Collapsed"/>
+
+            <!-- 表单 -->
+            <TextBlock Text="用户名" FontSize="12" Foreground="{StaticResource MutedBrush}"/>
+            <TextBox x:Name="UsernameBox" Style="{StaticResource InputBox}"/>
+
+            <TextBlock Text="密码" FontSize="12" Foreground="{StaticResource MutedBrush}"/>
+            <PasswordBox x:Name="PasswordBox" Style="{StaticResource PwdBox}"/>
+
+            <!-- 登录按钮 -->
+            <Button x:Name="LoginBtn" Style="{StaticResource PrimaryButton}" Content="登 录"
+                    Click="LoginBtn_Click" Margin="0,6,0,0"/>
+
+            <!-- 底部链接 -->
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,20,0,0">
+                <TextBlock Text="还没有账号？" Foreground="{StaticResource MutedBrush}" FontSize="12"/>
+                <TextBlock Text="立即注册" Foreground="{StaticResource FgBrush}" FontSize="12" Margin="6,0,0,0"
+                           Cursor="Hand" MouseLeftButtonUp="RegisterLink_Click"/>
+            </StackPanel>
+        </StackPanel>
+    </Grid>
+</Window>

@@ -1,0 +1,78 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net9.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UseWPF>true</UseWPF>
+    <AssemblyName>xHR</AssemblyName>
+    <Product>xHR</Product>
+    <ApplicationIcon>app.ico</ApplicationIcon>
+    <!-- 裁剪发布：减小体积 -->
+    <PublishSingleFile>true</PublishSingleFile>
+    <SelfContained>true</SelfContained>
+    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
+    <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
+    <EnableCompressionInSingleFile>true</EnableCompressionInSingleFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2" />
+    <PackageReference Include="QRCoder" Version="1.6.0" />
+  </ItemGroup>
+
+  <!--
+    挂载子程序物料（微信 RPA / matrixmedia）由独立物料仓按版本提供，
+    不进本源码仓。CI 流水线先按 build/version.json 拉取物料解压到 apps\、appr\，
+    再执行 publish；本机联调时源码树内可临时放置同名目录。
+    运行时再生的日志/截图/记忆/事件/缓存不进发布包。
+  -->
+  <ItemGroup>
+    <Content Include="apps\WeChatRPA\**\*" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" ExcludeFromSingleFile="true" />
+    <Content Remove="apps\WeChatRPA\**\logs\**" />
+    <Content Remove="apps\WeChatRPA\**\screenshots\**" />
+    <Content Remove="apps\WeChatRPA\**\conversation_memory\**" />
+    <Content Remove="apps\WeChatRPA\**\events\**" />
+    <Content Remove="apps\WeChatRPA\**\__pycache__\**" />
+    <Content Remove="apps\WeChatRPA\**\_probe_tmp\**" />
+    <Content Remove="apps\WeChatRPA\**\*.pid" />
+    <!-- 开发期探针/回归脚本不进发布包（正式代码未引用） -->
+    <Content Remove="apps\WeChatRPA\**\_probe_*.py" />
+    <Content Remove="apps\WeChatRPA\**\_test_*.py" />
+    <Content Remove="apps\WeChatRPA\**\_regress_*.py" />
+    <Content Remove="apps\WeChatRPA\**\probe_uia.py" />
+    <Content Remove="apps\WeChatRPA\**\calibrate_*.py" />
+    <!-- 开发诊断/标定脚本、辅助启动脚本与说明，不进发布包 -->
+    <Content Remove="apps\WeChatRPA\.p\**" />
+    <Content Remove="apps\WeChatRPA\**\*.bat" />
+    <Content Remove="apps\WeChatRPA\**\.gitignore" />
+    <Content Remove="apps\WeChatRPA\SKILL.md" />
+    <!-- 本机下载的技能包与个人状态：发布版不带，登录/首次使用后重新生成 -->
+    <Content Remove="apps\WeChatRPA\runtime\skills\**" />
+    <Content Remove="apps\WeChatRPA\runtime\my_contacts.json" />
+    <!-- 注：user_config.json 是含 lobster 段的配置骨架（非个人状态），需随包分发；
+         登录后由启动器 UserConfigSyncService 回写 api_key，不能整体排除，否则子程序启动即报缺文件。 -->
+    <Content Remove="apps\WeChatRPA\runtime\downloaded_skills.json" />
+    <Content Remove="apps\WeChatRPA\runtime\moments_queue.json" />
+    <Content Remove="apps\WeChatRPA\runtime\chat_strategy_config.json" />
+
+    <!--
+      第二个挂载程序：matrixmedia 矩阵工具（Electron 免安装目录）。
+      整体随构建输出复制到 exe 同目录下的 appr\matrixmedia，保持内部相对层级。
+    -->
+    <Content Include="appr\matrixmedia\**\*" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" ExcludeFromSingleFile="true" />
+  </ItemGroup>
+
+  <!-- 启动器自身的窗口图标与品牌 logo（WPF 资源，随程序集打包） -->
+  <ItemGroup>
+    <Resource Include="app.ico" />
+    <Resource Include="Assets\logo.png" />
+  </ItemGroup>
+
+  <!-- 员工卡片专属封面：壳包内置，物料未下载也能展示；随发布目录复制到 exe 同级 Assets\covers -->
+  <ItemGroup>
+    <Content Include="Assets\covers\**\*" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+  </ItemGroup>
+
+</Project>

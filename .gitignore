@@ -1,0 +1,75 @@
+# ============================================================
+# x.HR Launcher 主仓 .gitignore
+# 原则：主仓只放 WPF 源码、Assets、工程文件与配置骨架；
+# 近 400 MB 的运行时物料（Python / Electron）走独立物料仓按版本拉取，
+# 不进入本仓库。
+# ============================================================
+
+# ---- 构建产物 ----
+bin/
+obj/
+publish/
+dist/
+# build/ 下只保留版本与清单骨架，产物暂存目录与 zip 不入库
+build/material-stage/
+build/publish-*/
+build/*.zip
+build/*.manifest.json
+*.zip
+*.7z
+*.rar
+
+# ---- 挂载运行时物料（独立制品仓，不进主仓）----
+# 排除 apps / appr 下的内容；主仓只保留 RPA 配置骨架（空密钥占位，登录后回写）。
+apps/**
+!apps/WeChatRPA/
+!apps/WeChatRPA/runtime/
+!apps/WeChatRPA/runtime/user_config.json
+appr/**
+
+# ---- RPA 运行态 / 个人隐私 / 业务话术（本机生成，不入库）----
+apps/WeChatRPA/runtime/logs/
+apps/WeChatRPA/runtime/screenshots/
+apps/WeChatRPA/runtime/conversation_memory/
+apps/WeChatRPA/runtime/events/
+apps/WeChatRPA/runtime/__pycache__/
+apps/WeChatRPA/runtime/_crops/
+apps/WeChatRPA/runtime/_probe_tmp/
+apps/WeChatRPA/runtime/*.pid
+apps/WeChatRPA/runtime/monitor.pid
+apps/WeChatRPA/runtime/my_contacts.json
+apps/WeChatRPA/runtime/chat_strategy_config.json
+apps/WeChatRPA/runtime/moments_queue.json
+apps/WeChatRPA/runtime/downloaded_skills.json
+apps/WeChatRPA/runtime/moments_config.json
+apps/WeChatRPA/runtime/change_detect_config.json
+apps/WeChatRPA/runtime/relay_config.json
+apps/WeChatRPA/runtime/user_config.local.json
+
+# ---- 探针 / 回归 / 标定 / 备份脚本（开发期产物，不入库）----
+apps/WeChatRPA/runtime/_probe_*.py
+apps/WeChatRPA/runtime/_test_*.py
+apps/WeChatRPA/runtime/_regress_*.py
+apps/WeChatRPA/runtime/probe_uia.py
+apps/WeChatRPA/runtime/calibrate_*.py
+apps/WeChatRPA/runtime/*.bak
+apps/WeChatRPA/runtime/*.bak2
+apps/WeChatRPA/runtime/*.bak3
+apps/WeChatRPA/runtime/.p/
+apps/WeChatRPA/**/*.bat
+apps/WeChatRPA/SKILL.md
+
+# ---- 本地密钥 / 用户配置覆盖 ----
+*.local.json
+secrets.*
+.env
+.env.*
+
+# ---- IDE / 系统 ----
+.vs/
+.idea/
+*.user
+*.suo
+.DS_Store
+Thumbs.db
+desktop.ini

@@ -1,0 +1,44 @@
+<Window x:Class="Launcher.Views.RegisterWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="xHR - 注册" Height="620" Width="400"
+        WindowStartupLocation="CenterScreen"
+        Background="{StaticResource BgBrush}" Foreground="{StaticResource FgBrush}"
+        FontFamily="Microsoft YaHei UI" FontSize="13"
+        ResizeMode="NoResize">
+
+    <Grid Margin="40,30,40,24">
+        <StackPanel VerticalAlignment="Center">
+
+            <StackPanel HorizontalAlignment="Center" Margin="0,0,0,28">
+                <Image Source="assets/logo.png" Width="44" Height="44" HorizontalAlignment="Center"
+                       RenderOptions.BitmapScalingMode="HighQuality"/>
+                <TextBlock Text="创建账号" FontSize="22" FontWeight="Bold" Foreground="{StaticResource FgBrush}" HorizontalAlignment="Center" Margin="0,14,0,0"/>
+            </StackPanel>
+
+            <TextBlock x:Name="ErrorText" Foreground="{StaticResource DestructiveBrush}" FontSize="12" Margin="0,0,0,10"
+                       TextWrapping="Wrap" Visibility="Collapsed"/>
+
+            <TextBlock Text="手机号（用户名）" FontSize="12" Foreground="{StaticResource MutedBrush}"/>
+            <TextBox x:Name="UsernameBox" Style="{StaticResource InputBox}"/>
+
+            <TextBlock Text="邮箱" FontSize="12" Foreground="{StaticResource MutedBrush}"/>
+            <TextBox x:Name="EmailBox" Style="{StaticResource InputBox}"/>
+
+            <TextBlock Text="密码（至少6位）" FontSize="12" Foreground="{StaticResource MutedBrush}"/>
+            <PasswordBox x:Name="PasswordBox" Style="{StaticResource PwdBox}"/>
+
+            <TextBlock Text="推荐码（选填）" FontSize="12" Foreground="{StaticResource MutedBrush}"/>
+            <TextBox x:Name="ReferralBox" Style="{StaticResource InputBox}"/>
+
+            <Button x:Name="RegisterBtn" Style="{StaticResource PrimaryButton}" Content="注 册"
+                    Click="RegisterBtn_Click" Margin="0,6,0,0"/>
+
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,18,0,0">
+                <TextBlock Text="已有账号？" Foreground="{StaticResource MutedBrush}" FontSize="12"/>
+                <TextBlock Text="返回登录" Foreground="{StaticResource FgBrush}" FontSize="12" Margin="6,0,0,0"
+                           Cursor="Hand" MouseLeftButtonUp="BackToLogin_Click"/>
+            </StackPanel>
+        </StackPanel>
+    </Grid>
+</Window>

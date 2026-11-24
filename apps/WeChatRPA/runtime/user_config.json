@@ -1,0 +1,12 @@
+{
+  "lobster": {
+    "api_key": "",
+    "base_url": "https://saas-ai.cn/v1/chat/completions",
+    "model": "qwen",
+    "moduleId": "",
+    "model_fallbacks": [
+      "kimi"
+    ],
+    "enable_thinking": false
+  }
+}

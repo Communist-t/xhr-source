@@ -1,0 +1,234 @@
+# ============================================================
+# xHR Launcher 发版流水线
+#
+# 产物拆分（安装包与物料包分离）：
+#   1. 安装包 xHR_<版本>_win-x64-setup.exe：NSIS 安装器（仅 .NET 启动器本体），
+#      体积小，挂 Gitee Release 直链（国内更新走 Gitee）。
+#   2. 物料包 material_<物料id>_<物料版本>.zip：各子程序员工本体，体积大，挂 GitHub Release。
+#   3. latest.json：壳子更新清单（package_url 回填 Gitee 安装包直链）。
+#   4. materials.json：物料清单（各物料 package_url 回填 GitHub 物料包直链）。
+#
+# 触发：
+#   - 打 tag v*.*.*：正式发版，出包并双端挂附件；
+#   - 推送 main：只做构建校验，产物存 Actions artifact，不发 Release。
+#
+# 需要在仓库 Settings 配置：
+#   Secrets:
+#     GITEE_TOKEN      Gitee 私人令牌（有仓库 Release 读写权限）
+#   Variables:
+#     GITEE_REPO       Gitee 仓库，格式 owner/repo
+#     GITEE_OWNER      Gitee 用户名/组织名（拼下载直链用）
+#   物料仓相关沿用现有 MATERIAL_REPO / MATERIAL_TOKEN。
+# ============================================================
+
+name: build-release
+
+on:
+  push:
+    tags: ["v*.*.*"]
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      material_version:
+        description: "覆盖物料版本（留空取 build/version.json）"
+        required: false
+        default: ""
+
+env:
+  DOTNET_NOLOGO: "true"
+  DOTNET_CLI_TELEMETRY_OPTOUT: "1"
+  MATERIAL_REPO_OWNER_REPO: "${{ vars.MATERIAL_REPO || 'Communist-t/xhr-materials' }}"
+  GITEE_REPO: "${{ vars.GITEE_REPO || '' }}"
+  GITEE_OWNER: "${{ vars.GITEE_OWNER || '' }}"
+
+jobs:
+  build:
+    runs-on: windows-latest
+    permissions:
+      contents: write
+      actions: write
+    steps:
+      - name: 检出主仓源码
+        uses: actions/checkout@v4
+
+      - name: 读取版本信息
+        id: ver
+        shell: pwsh
+        run: |
+          $v = Get-Content build\version.json -Raw | ConvertFrom-Json
+          $launcher = $v.launcher_version
+          $material = '${{ github.event.inputs.material_version }}'
+          if ([string]::IsNullOrWhiteSpace($material)) { $material = $v.runtime_material_version }
+          if ("${{ github.ref_type }}" -eq "tag") {
+            $launcher = "${{ github.ref_name }}".TrimStart("v")
+          }
+          "launcher=$launcher" >> $env:GITHUB_OUTPUT
+          "material=$material" >> $env:GITHUB_OUTPUT
+          Write-Host "Launcher=$launcher 物料=$material"
+
+      - name: 安装 .NET 9 SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "9.0.x"
+
+      - name: 安装 NSIS
+        run: choco install nsis --no-progress -y
+
+      - name: 下载匹配版本物料
+        shell: pwsh
+        env:
+          GH_TOKEN: "${{ secrets.MATERIAL_TOKEN || secrets.GITHUB_TOKEN }}"
+          MATERIAL_REPO: "${{ env.MATERIAL_REPO_OWNER_REPO }}"
+          MATERIAL_VERSION: "${{ steps.ver.outputs.material }}"
+        run: |
+          $ErrorActionPreference = "Stop"
+          $stage = "build\material-stage"
+          New-Item -ItemType Directory -Force -Path $stage | Out-Null
+
+          $rel = gh release view "$env:MATERIAL_VERSION" --repo $env:MATERIAL_REPO --json tagName,assets | ConvertFrom-Json
+          if (-not $rel) { throw "物料仓 $env:MATERIAL_REPO 找不到 tag $env:MATERIAL_VERSION" }
+
+          $zipAsset = $rel.assets | Where-Object { $_.name -like "material-*.zip" } | Select-Object -First 1
+          if (-not $zipAsset) { throw "物料 Release 中没有 material-*.zip 附件" }
+
+          gh release download "$env:MATERIAL_VERSION" --repo $env:MATERIAL_REPO `
+            --pattern $zipAsset.name --dir $stage --clobber
+
+          Expand-Archive -LiteralPath (Join-Path $stage $zipAsset.name) -DestinationPath $stage -Force
+          Remove-Item -LiteralPath (Join-Path $stage $zipAsset.name) -Force
+          Write-Host "物料已解压到 $stage"
+
+      - name: 发布打包（安装包 + 物料包 + 清单）
+        shell: pwsh
+        run: |
+          pwsh -NoProfile -File scripts\publish.ps1 `
+            -MaterialDir build\material-stage `
+            -Version "${{ steps.ver.outputs.launcher }}"
+
+      - name: 上传构建产物（分支校验用）
+        if: github.ref_type != 'tag'
+        uses: actions/upload-artifact@v4
+        with:
+          name: xHR_${{ steps.ver.outputs.launcher }}_win-x64
+          path: dist/*-setup.exe
+          retention-days: 7
+
+      # ===== 以下仅打 tag 发版时执行 =====
+
+      # 1) 物料包 + 物料清单先挂 GitHub Release（物料包体积大，不走 Gitee 附件）。
+      - name: 物料包与清单挂 GitHub Release
+        if: github.ref_type == 'tag'
+        shell: pwsh
+        env:
+          GH_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+        run: |
+          $ErrorActionPreference = "Stop"
+          gh release upload "${{ github.ref_name }}" dist/material_*.zip --repo "${{ github.repository }}" --clobber
+          gh release upload "${{ github.ref_name }}" dist/material_*.zip.sha256 --repo "${{ github.repository }}" --clobber
+          gh release upload "${{ github.ref_name }}" dist/materials.json --repo "${{ github.repository }}" --clobber
+
+      # 2) 回填 materials.json：各物料 package_url 指向 GitHub 物料包直链。
+      - name: 回填 materials.json 的 GitHub 物料直链
+        if: github.ref_type == 'tag'
+        shell: pwsh
+        env:
+          GH_REPO: "${{ github.repository }}"
+        run: |
+          $ErrorActionPreference = "Stop"
+          $manifest = Get-Content dist\materials.json -Raw | ConvertFrom-Json
+          foreach ($m in $manifest.materials) {
+            $zipName = "material_" + $m.material_id + "_" + $m.material_version + ".zip"
+            $m.package_url = "https://github.com/$env:GH_REPO/releases/download/${{ github.ref_name }}/$zipName"
+          }
+          $manifest | ConvertTo-Json -Depth 6 | Out-File dist\materials.json -Encoding utf8
+          Write-Host "materials.json 已回填 GitHub 物料直链"
+
+      # 3) 回填后的 materials.json 补挂回 GitHub Release。
+      - name: 回填后的 materials.json 补挂 GitHub Release
+        if: github.ref_type == 'tag'
+        shell: pwsh
+        env:
+          GH_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+        run: |
+          $ErrorActionPreference = "Stop"
+          gh release upload "${{ github.ref_name }}" dist/materials.json --repo "${{ github.repository }}" --clobber
+
+      # 4) Gitee Release 建/取（壳包小附件走 Gitee）。
+      - name: 同步到 Gitee Release（建/取 Release）
+        if: github.ref_type == 'tag' && env.GITEE_REPO != ''
+        shell: pwsh
+        env:
+          GITEE_TOKEN: "${{ secrets.GITEE_TOKEN }}"
+          GITEE_REPO: "${{ env.GITEE_REPO }}"
+          TAG: "${{ github.ref_name }}"
+        run: |
+          $ErrorActionPreference = "Stop"
+          $headers = @{ Authorization = "token $env:GITEE_TOKEN" }
+          $owner, $repo = $env:GITEE_REPO -split '/'
+
+          $rel = Invoke-RestMethod -Headers $headers `
+            -Uri "https://gitee.com/api/v5/repos/$owner/$repo/releases/tags/$env:TAG" -Method Get -ErrorAction SilentlyContinue
+          if (-not $rel) {
+            $body = @{
+              tag_name        = $env:TAG
+              name            = "xHR $env:TAG"
+              body            = "自动同步自 GitHub Release"
+              target_commitish = "main"
+            } | ConvertTo-Json
+            $rel = Invoke-RestMethod -Headers $headers -ContentType "application/json" `
+              -Uri "https://gitee.com/api/v5/repos/$owner/$repo/releases" -Method Post -Body $body
+          }
+          "release_id=$($rel.id)" >> $env:GITHUB_ENV
+          Write-Host "Gitee Release ID: $($rel.id)"
+
+      # 5) 回填 latest.json：package_url 指向 Gitee 安装包直链。
+      - name: 回填 latest.json 的 Gitee 安装包直链
+        if: github.ref_type == 'tag' && env.GITEE_REPO != ''
+        shell: pwsh
+        env:
+          GITEE_OWNER: "${{ env.GITEE_OWNER }}"
+          GITEE_REPO: "${{ env.GITEE_REPO }}"
+          TAG: "${{ github.ref_name }}"
+        run: |
+          $ErrorActionPreference = "Stop"
+          $owner, $repo = $env:GITEE_REPO -split '/'
+          $pkgName = Get-ChildItem dist\xHR_*-setup.exe | Select-Object -First 1 -ExpandProperty Name
+          $packageUrl = "https://gitee.com/$owner/$repo/releases/download/$env:TAG/$pkgName"
+
+          $latest = Get-Content dist\latest.json -Raw | ConvertFrom-Json
+          $latest.package_url = $packageUrl
+          $latest | ConvertTo-Json -Depth 4 | Out-File dist\latest.json -Encoding utf8
+          Write-Host "latest.json package_url = $packageUrl"
+
+      # 6) 安装包 + latest.json 挂到 Gitee Release（仅小附件；物料包不上 Gitee）。
+      - name: 上传安装包与 latest.json 到 Gitee Release
+        if: github.ref_type == 'tag' && env.GITEE_REPO != ''
+        shell: pwsh
+        env:
+          GITEE_TOKEN: "${{ secrets.GITEE_TOKEN }}"
+          GITEE_REPO: "${{ env.GITEE_REPO }}"
+          RELEASE_ID: "${{ env.release_id }}"
+        run: |
+          $ErrorActionPreference = "Stop"
+          $owner, $repo = $env:GITEE_REPO -split '/'
+
+          Get-ChildItem dist\xHR_*-setup.exe, dist\latest.json, dist\xHR_*-setup.exe.sha256 -File | ForEach-Object {
+            $file = $_.FullName
+            Write-Host "上传 $($_.Name) 到 Gitee Release $env:RELEASE_ID"
+            # Gitee 附件端点为 /attach_files；令牌走 query 参数 access_token（Authorization 头不被该端点识别）
+            $uploadUrl = "https://gitee.com/api/v5/repos/$owner/$repo/releases/$env:RELEASE_ID/attach_files?access_token=$env:GITEE_TOKEN"
+            $form = @{ file = Get-Item $file }
+            Invoke-RestMethod -Form $form -Uri $uploadUrl -Method Post | Out-Null
+          }
+
+      # 7) 回填后的 latest.json 补挂回 GitHub Release。
+      - name: 回填后的 latest.json 补挂 GitHub Release
+        if: github.ref_type == 'tag' && env.GITEE_REPO != ''
+        shell: pwsh
+        env:
+          GH_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+        run: |
+          $ErrorActionPreference = "Stop"
+          $latest = Get-Content dist\latest.json -Raw | ConvertFrom-Json
+          Write-Host "回填后 package_url = $($latest.package_url)"
+          gh release upload "${{ github.ref_name }}" dist/latest.json --repo "${{ github.repository }}" --clobber
