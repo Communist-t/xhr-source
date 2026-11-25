@@ -1,0 +1,2122 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>销售策略与高情商沟通官</title>
+<link rel="icon" type="image/png" href="logo.png">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    /* 黑白灰状态语言：实心+脉冲=运行 / 空心=停止 / 徽章深浅=业务状态强弱 */
+    --ink-1: #111111; --ink-2: #333333; --ink-3: #666666; --ink-4: #999999; --ink-5: #C9C9C9;
+    --bg: #FFFFFF;
+    --page: #FAFAFA;
+    --fg: #111111;
+    --muted: #666666;
+    --text-muted: #999999;
+    --line: #EAEAEA;
+    --border-subtle: #EAEAEA;
+    --input-border: #E5E5E5;
+    --soft: #F5F5F5;
+    --surface: #FFFFFF;
+    --surface-raised: #F0F0F0;
+    --accent: #111111;
+    --primary: #111111;
+    --primary-hover: #000000;
+    --primary-muted: #ECECEC;
+    /* 状态色保持灰阶别名，供旧内联样式引用 */
+    --destructive: #111111;
+    --success: #111111;
+    --warning: #666666;
+    --radius: 10px; --radius-s: 6px; --radius-m: 10px; --radius-l: 14px;
+    --shadow-card: none;
+    --shadow-elevated: 0 1px 2px rgba(17,17,17,0.05);
+    --shadow-modal: 0 12px 48px rgba(17,17,17,0.18);
+    --shadow-hover: 0 2px 8px rgba(17,17,17,0.07), 0 8px 24px rgba(17,17,17,0.06);
+    --mono: "Cascadia Code", "JetBrains Mono", Consolas, monospace;
+  }
+  @keyframes pulse {
+    0% { box-shadow: 0 0 0 0 rgba(17,17,17,.30); }
+    70% { box-shadow: 0 0 0 5px rgba(17,17,17,0); }
+    100% { box-shadow: 0 0 0 0 rgba(17,17,17,0); }
+  }
+  @keyframes rise { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+  @keyframes pop { from { opacity: 0; transform: translateY(10px) scale(.98); } to { opacity: 1; transform: none; } }
+  html, body { height: 100%; }
+  body {
+    font-family: "MiSans", "HarmonyOS Sans SC", -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei UI', 'Microsoft YaHei', 'Noto Sans CJK SC', system-ui, sans-serif;
+    font-size: 13px; color: var(--fg); background: var(--bg);
+    display: flex;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  ::selection { background: var(--ink-1); color: #fff; }
+
+  /* ---- 侧边栏：白底 + 发丝分隔线，选中项实心反白 ---- */
+  aside {
+    width: 248px; border-right: 1px solid var(--line);
+    display: flex; flex-direction: column; flex-shrink: 0;
+    background: var(--surface);
+  }
+  .brand { display: flex; align-items: center; gap: 10px; padding: 18px 16px 14px; }
+  .brand .mark {
+    width: 30px; height: 30px; border-radius: 8px; background: var(--ink-1); color: #fff;
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  }
+  .brand .mark svg { width: 16px; height: 16px; stroke: #fff; stroke-width: 1.7; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+  .brand .t { font-size: 13px; font-weight: 600; letter-spacing: -.01em; line-height: 1.25; color: var(--fg); }
+  .brand .s { font-size: 10.5px; color: var(--ink-4); letter-spacing: .04em; }
+  svg.ic { width: 15px; height: 15px; stroke: currentColor; stroke-width: 1.6; fill: none; stroke-linecap: round; stroke-linejoin: round; flex-shrink: 0; }
+  svg.ic.sm { width: 13px; height: 13px; }
+  nav { flex: 1; padding: 8px 10px; overflow-y: auto; }
+  .nav-label { font-size: 10.5px; color: var(--ink-4); letter-spacing: .08em; padding: 12px 8px 6px; }
+  nav button .cnt { margin-left: auto; font-size: 11px; color: var(--ink-4); font-variant-numeric: tabular-nums; }
+  nav button.active .cnt { color: rgba(255,255,255,.7); }
+  nav button .run-ind { margin-left: auto; width: 6px; height: 6px; border-radius: 50%; background: var(--ink-1); animation: pulse 2s infinite; }
+  nav button.active .run-ind { background: #fff; }
+  nav button {
+    display: flex; align-items: center; gap: 9px; width: 100%; text-align: left;
+    padding: 8px 9px; margin-bottom: 2px; background: none; border: none; cursor: pointer;
+    font-size: 13px; color: var(--ink-2); border-radius: var(--radius-s); font-family: inherit;
+    transition: background .12s ease, color .12s ease;
+  }
+  nav button:hover { background: var(--soft); color: var(--ink-1); }
+  nav button.active { background: var(--ink-1); color: #fff; font-weight: 500; }
+  .setting-btn {
+    display: flex; align-items: center; gap: 9px;
+    margin: 10px; padding: 8px 9px; background: none; border: none;
+    cursor: pointer; font-size: 13px; text-align: left; border-radius: var(--radius-s); color: var(--ink-2);
+    font-family: inherit; border-top: none;
+  }
+  .setting-btn:hover { background: var(--soft); color: var(--ink-1); }
+  .setting-btn.active { background: var(--ink-1); color: #fff; }
+  .setting-btn .gear { font-size: 13px; color: var(--muted); }
+  .side-foot { padding: 10px; border-top: 1px solid var(--line); }
+  .run-card {
+    border: 1px solid var(--line); border-radius: var(--radius-m); padding: 10px 11px;
+    background: var(--surface); margin-bottom: 8px;
+  }
+  .run-card .rc-head { display: flex; align-items: center; gap: 7px; font-size: 12px; font-weight: 600; }
+  .run-card .rc-head .dot { width: 8px; height: 8px; }
+  .run-card .rc-meta { font-size: 11px; color: var(--ink-4); margin: 4px 0 8px; }
+  .run-card .rc-stop, .run-card .rc-start {
+    width: 100%; padding: 5px 0; font-size: 11.5px; font-family: inherit; cursor: pointer;
+    border-radius: var(--radius-s); display: flex; align-items: center; justify-content: center; gap: 5px;
+    transition: all .15s ease;
+  }
+  .run-card .rc-stop { border: 1px solid var(--ink-5); background: var(--surface); color: var(--ink-2); }
+  .run-card .rc-stop:hover, .run-card .rc-stop.armed { background: var(--ink-1); border-color: var(--ink-1); color: #fff; }
+  .run-card .rc-start { border: 1px solid var(--ink-1); background: var(--ink-1); color: #fff; }
+  .run-card.off .rc-stop { display: none; }
+  .run-card.off .rc-head { color: var(--ink-3); }
+  .run-card.off .rc-head .dot { display: none; }
+  .run-card.off .rc-head::before {
+    content: ""; width: 8px; height: 8px; border-radius: 50%;
+    border: 2px solid var(--ink-5); flex-shrink: 0;
+  }
+
+  /* ---- 主区 ---- */
+  main { flex: 1; display: flex; flex-direction: column; min-width: 0; background: var(--page); }
+  .topbar {
+    height: 52px; border-bottom: 1px solid var(--line); background: var(--surface);
+    display: flex; align-items: center; padding: 0 24px; gap: 14px;
+  }
+  /* 状态点：空心=停止，实心+脉冲=运行 */
+  .dot { width: 8px; height: 8px; border-radius: 50%; background: transparent; border: 2px solid var(--ink-5); display: inline-block; flex-shrink: 0; }
+  .dot.on { background: var(--ink-1); border-color: var(--ink-1); animation: pulse 2s infinite; }
+  .topbar h1 { font-size: 15px; font-weight: 600; letter-spacing: -.01em; margin: 0; }
+  .topbar .sub { font-size: 12px; color: var(--ink-4); }
+  .topbar-right { margin-left: auto; display: flex; align-items: center; gap: 8px; }
+  /* 状态胶囊：运行=实心点+脉冲；停止=空心点 */
+  .pill {
+    display: inline-flex; align-items: center; gap: 7px;
+    padding: 4px 11px 4px 9px; border-radius: 999px; font-size: 12px;
+    border: 1px solid var(--line); background: var(--surface); color: var(--ink-3);
+  }
+  .pill.run { color: var(--ink-1); font-weight: 500; border-color: var(--ink-1); }
+  .pill .dot { width: 7px; height: 7px; border: none; background: var(--ink-5); }
+  .pill .dot.on { background: var(--ink-1); animation: pulse 2s infinite; }
+  .content { padding: 24px; overflow: auto; flex: 1; }
+
+  .panel { display: none; }
+  .panel.active { display: block; }
+  .panel.active > * { animation: rise .38s cubic-bezier(.2,.7,.3,1) both; }
+  .panel.hidden { display: none !important; }
+  h1 { font-size: 16px; font-weight: 600; letter-spacing: -0.01em; margin: 0 0 18px; color: var(--fg); }
+  h2 { font-size: 13px; font-weight: 600; margin: 20px 0 10px; color: var(--fg); }
+
+  /* ---- 表单：常态浅灰底，hover 出现描边，聚焦白底 + 黑色聚焦环 ---- */
+  label { display: block; font-size: 12px; color: var(--ink-3); margin: 14px 0 6px; letter-spacing: 0.2px; }
+  input, textarea, select {
+    width: 100%; padding: 8px 11px; border: 1px solid transparent;
+    font-size: 13px; font-family: inherit; background: var(--soft); color: var(--fg);
+    border-radius: var(--radius-m); min-height: 36px;
+    transition: border-color .15s ease, background-color .15s ease, box-shadow .15s ease;
+  }
+  textarea { resize: vertical; min-height: 84px; font-family: inherit; line-height: 1.7; }
+  input:hover, textarea:hover, select:hover { border-color: var(--ink-5); }
+  input:focus, textarea:focus, select:focus {
+    outline: none; border-color: var(--ink-1); background: var(--surface);
+    box-shadow: 0 0 0 3px rgba(17,17,17,.08);
+  }
+
+  button.btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+    padding: 8px 15px; border: 1px solid transparent; background: var(--primary);
+    color: #fff; cursor: pointer; font-size: 12.5px; font-weight: 500; font-family: inherit;
+    border-radius: var(--radius-m); min-height: 36px; white-space: nowrap;
+    transition: background-color .15s ease, border-color .15s ease, box-shadow .15s ease, opacity .15s ease, color .15s ease;
+  }
+  button.btn.ghost { background: var(--surface); color: var(--fg); border-color: var(--ink-5); }
+  button.btn:hover { background: var(--primary-hover); box-shadow: var(--shadow-hover); }
+  button.btn:active { background: #2A2A2A; }
+  button.btn.ghost:hover { background: var(--surface); border-color: var(--ink-1); box-shadow: var(--shadow-elevated); }
+  button.btn:disabled { opacity: .35; background: var(--soft); color: var(--text-muted); border-color: transparent; cursor: default; box-shadow: none; }
+  /* 危险操作：描边 + hover 反白；.armed 为两步确认态（Phase 2 接入 JS） */
+  button.btn.danger { background: var(--surface); color: var(--fg); border-color: var(--ink-5); }
+  button.btn.danger:hover { background: var(--ink-1); border-color: var(--ink-1); color: #fff; }
+  button.btn.danger.armed { background: var(--ink-1); border-color: var(--ink-1); color: #fff; font-weight: 600; }
+  button.btn.stop { background: var(--surface); color: var(--fg); border: 1px solid var(--ink-5); }
+  button.btn.stop:hover, button.btn.stop.armed { background: var(--ink-1); border-color: var(--ink-1); color: #fff; }
+  button.btn.stop:disabled { opacity: .35; background: var(--soft); color: var(--text-muted); border-color: transparent; cursor: default; box-shadow: none; }
+  button.btn.sm { padding: 4px 10px; font-size: 11.5px; border-radius: var(--radius-s); min-height: 0; }
+  /* 灰阶开关（Phase 2 表单用） */
+  .switch { position: relative; width: 34px; height: 19px; border-radius: 999px; background: var(--ink-5); cursor: pointer; transition: background .18s ease; flex-shrink: 0; border: none; padding: 0; }
+  .switch::after { content: ""; position: absolute; top: 2px; left: 2px; width: 15px; height: 15px; border-radius: 50%; background: #fff; box-shadow: var(--shadow-elevated); transition: left .18s ease; }
+  .switch.on { background: var(--ink-1); }
+  .switch.on::after { left: 17px; }
+  .row { display: flex; gap: 12px; align-items: center; }
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+  .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+  .mt { margin-top: 14px; }
+  .sec-head { display: flex; align-items: baseline; gap: 10px; margin-bottom: 14px; }
+  .sec-head h2 { font-size: 13px; font-weight: 600; margin: 0; }
+  .sec-head .note { font-size: 11.5px; color: var(--ink-4); }
+  .sec-head .right { margin-left: auto; display: flex; gap: 8px; align-items: center; }
+  .card.hoverable:hover { border-color: var(--ink-5); box-shadow: var(--shadow-hover); }
+  button.btn.plain { background: none; color: var(--ink-3); border-color: transparent; padding: 8px 9px; }
+  button.btn.plain:hover { color: var(--ink-1); background: var(--soft); box-shadow: none; }
+  .card {
+    border: 1px solid var(--line); padding: 20px; border-radius: var(--radius-l);
+    background: var(--surface); box-shadow: var(--shadow-elevated);
+    transition: box-shadow .18s ease, border-color .18s ease;
+  }
+  .card:hover { border-color: var(--ink-5); box-shadow: var(--shadow-hover); }
+  .muted { color: var(--muted); font-size: 12px; }
+  .space { margin-top: 18px; }
+
+  table { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+  th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--line); }
+  th { color: var(--ink-4); font-weight: 500; font-size: 11px; letter-spacing: 0.03em; }
+  tbody tr { transition: background .12s ease; }
+  tbody tr:hover { background: var(--field, #F5F5F5); }
+  td { font-variant-numeric: tabular-nums; }
+
+  /* 日志终端：反相黑底，错误级由 JS 着色（Phase 2 加级别芯片） */
+  pre.logbox {
+    background: var(--ink-1); color: #E8E8E8; padding: 14px 16px;
+    border: none; border-radius: var(--radius-l);
+    font-size: 12px; font-family: var(--mono); line-height: 1.9;
+    white-space: pre-wrap; word-break: break-all; max-height: 70vh; overflow: auto;
+    box-shadow: var(--shadow-hover);
+  }
+  /* 徽章四级：实心=达成/激活 · 描边=进行中 · 浅灰=未达成 · 虚线=转人工 */
+  .badge { display: inline-flex; align-items: center; gap: 4px; padding: 1px 9px; border: 1px solid transparent; border-radius: 999px; font-size: 11px; line-height: 18px; color: var(--ink-4); background: var(--soft); white-space: nowrap; }
+  .badge.on { background: var(--ink-1); color: #fff; }
+  .badge.outline { background: var(--surface); color: var(--ink-1); border-color: var(--ink-1); }
+  .badge.dashed { background: var(--surface); color: var(--ink-2); border-style: dashed; border-color: var(--ink-5); }
+  .badge.tag { background: var(--soft); color: var(--ink-3); }
+
+  /* ---- 我的员工 ---- */
+  .emp-group-toggle {
+    display: flex; align-items: center; gap: 8px;
+    margin: 0; padding: 6px 8px; font-size: 13px; font-weight: 600; cursor: pointer;
+    border: none; border-radius: var(--radius-s);
+    user-select: none; color: var(--fg); background: none; font-family: inherit;
+  }
+  .emp-group-toggle:hover { background: var(--soft); }
+  .emp-group-toggle span { display: inline-block; width: 12px; transition: transform 0.15s; color: var(--muted); }
+  .emp-group-toggle.collapsed span { transform: rotate(-90deg); }
+  .emp-side-list.collapsed { display: none; }
+  .emp-side-list { flex: 1; overflow: visible; }
+  .emp-me-item {
+    margin: 0 10px 8px; padding: 12px 13px; cursor: pointer;
+    border: 1px solid var(--line); border-radius: var(--radius-l); background: var(--surface);
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  }
+  .emp-me-item:hover { border-color: var(--ink-5); box-shadow: var(--shadow-elevated); }
+  .emp-me-item.muted { border: none; background: none; margin: 0 18px; padding: 8px 0; box-shadow: none; }
+
+  /* 侧边栏条目卡片：发丝描边，hover 加深 + 轻阴影 */
+  .emp-side-row {
+    margin: 0 10px 8px; padding: 12px 13px; cursor: pointer;
+    border: 1px solid var(--line); border-radius: var(--radius-l); background: var(--surface);
+    display: flex; justify-content: space-between; align-items: center; gap: 10px;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  }
+  .emp-side-row:hover { border-color: var(--ink-5); box-shadow: var(--shadow-elevated); }
+  /* 当前使用：左侧绿条 + 极浅绿底，按钮变「使用中」，和普通行一眼区分 */
+  .emp-side-row.in-use {
+    border-color: rgba(10,122,61,.45);
+    background: linear-gradient(90deg, rgba(10,122,61,.06) 0, rgba(10,122,61,0) 46%), var(--surface);
+    box-shadow: inset 3px 0 0 #0a7a3d;
+    padding-left: 16px;
+  }
+  .emp-side-row.in-use:hover { border-color: rgba(10,122,61,.6); box-shadow: inset 3px 0 0 #0a7a3d, var(--shadow-elevated); }
+  .emp-side-row.in-use .side-btn { border-color: rgba(10,122,61,.45); color: #0a7a3d; background: transparent; cursor: pointer; }
+  .emp-side-row.in-use .side-btn:hover { background: rgba(10,122,61,.08); border-color: rgba(10,122,61,.45); color: #0a7a3d; }
+  .emp-side-row .side-btn {
+    flex-shrink: 0; padding: 4px 10px; font-size: 11px; border-radius: var(--radius-s);
+    border: 1px solid var(--ink-5); background: var(--surface); color: var(--fg); cursor: pointer;
+    transition: all .15s ease;
+  }
+  .emp-side-row .side-btn:hover { background: var(--ink-1); border-color: var(--ink-1); color: #fff; }
+  /* 来源标签：我创建的（深描边）/ 来自某人（浅描边） */
+  .src-tag {
+    display: inline-block; font-size: 10px; line-height: 1; padding: 2px 5px; margin-left: 4px;
+    border: 1px solid var(--line); border-radius: 4px; color: var(--muted); vertical-align: 1px;
+  }
+  .src-tag.mine { border-color: var(--ink-5); color: var(--fg); }
+  .emp-me-item .nm { font-size: 13px; font-weight: 500; color: var(--fg); }
+  .emp-me-item .meta { font-size: 11px; color: var(--muted); margin-top: 3px; }
+
+  /* 卡片更多菜单（右侧三点） */
+  .menu-host { position: relative; }
+  .more-btn {
+    position: absolute; top: 8px; right: 8px; width: 24px; height: 24px;
+    display: inline-flex; align-items: center; justify-content: center;
+    background: none; border: none; cursor: pointer; color: var(--muted);
+    border-radius: 8px; font-size: 15px; line-height: 1; padding: 0; z-index: 2;
+  }
+  .more-btn:hover { background: var(--soft); color: var(--fg); }
+  .emp-me-item .more-btn { top: 5px; }
+  .card-menu {
+    position: absolute; top: 30px; right: 8px; left: auto; z-index: 50; min-width: 96px;
+    background: var(--surface); border: 1px solid transparent; border-radius: 12px;
+    box-shadow: var(--shadow-hover);
+    padding: 6px; display: none;
+  }
+  .card-menu.show { display: block; }
+  .card-menu .menu-item {
+    display: block; width: 100%; text-align: left; padding: 8px 10px; background: none; border: none;
+    cursor: pointer; font-size: 12px; color: var(--fg); border-radius: 8px;
+  }
+  .card-menu .menu-item:hover { background: var(--soft); }
+  .emp-main { flex: 1; padding: 24px; overflow-y: auto; min-width: 0; }
+  .emp-tabs { display: flex; gap: 0; border-bottom: 1px solid var(--line); margin-bottom: 20px; }
+  .emp-tabs button {
+    padding: 9px 18px; background: none; border: none; cursor: pointer;
+    font-size: 13px; color: var(--muted); border-bottom: 2px solid transparent; margin-bottom: -1px;
+  }
+  .emp-tabs button.active { color: var(--fg); border-bottom-color: var(--accent); font-weight: 600; }
+  .emp-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(280px, 100%), 1fr)); gap: 14px; }
+  .emp-card {
+    border: 1px solid var(--line); padding: 18px; border-radius: var(--radius-l); background: var(--surface);
+    display: flex; flex-direction: column; gap: 12px;
+    transition: border-color 0.18s ease, box-shadow 0.18s ease; cursor: pointer;
+    box-shadow: var(--shadow-elevated);
+  }
+  .emp-card:hover { border-color: var(--ink-5); box-shadow: var(--shadow-hover); }
+  .emp-card .nm { font-size: 14px; font-weight: 600; display: flex; align-items: center; gap: 6px; color: var(--fg); }
+  .emp-card .ver { font-size: 11px; color: var(--muted); font-weight: 400; }
+  .emp-card .desc { font-size: 12px; color: var(--muted); line-height: 1.7; flex: 1;
+    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .emp-card .top { display: flex; gap: 11px; align-items: center; }
+  .emp-card .foot { display: flex; align-items: center; gap: 8px; margin-top: 4px; padding-top: 10px; border-top: 1px solid var(--line); }
+  .emp-card .foot .meta { font-size: 11px; color: var(--ink-4); margin-right: auto; display: flex; align-items: center; gap: 4px; }
+  .emp-card .nm .ver { font-size: 10.5px; color: var(--ink-4); font-weight: 400; }
+  .emp-card .author {
+    font-size: 11px; color: var(--muted);
+    flex: 1 1 auto; min-width: 0;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  /* 广场卡片操作钮：紧凑一档，禁止文字换行（长脚注会把「下载」挤成竖排） */
+  .emp-card .foot .btn {
+    flex: 0 0 auto;
+    padding: 6px 14px; font-size: 12px; border-radius: 10px;
+    white-space: nowrap;
+  }
+  .lock { font-size: 12px; }
+
+  /* 下载进行态：按钮转圈 + 底部状态条 + 「我的员工」导航脉冲（黑白灰） */
+  .dl-spin {
+    display: inline-block; width: 11px; height: 11px; margin-right: 6px;
+    border: 2px solid currentColor; border-top-color: transparent; border-radius: 50%;
+    animation: dlspin .7s linear infinite; vertical-align: -1px;
+  }
+  @keyframes dlspin { to { transform: rotate(360deg); } }
+  #dl-status {
+    position: fixed; bottom: 74px; left: 50%; transform: translateX(-50%);
+    display: flex; align-items: center; gap: 8px;
+    background: var(--surface); color: var(--fg); padding: 10px 16px;
+    border: 1px solid var(--border, rgba(128,128,128,.35)); border-radius: 12px;
+    font-size: 13px; z-index: 9998; box-shadow: var(--shadow-hover);
+  }
+  .nav-pulse { animation: navpulse .8s ease-in-out 3; border-radius: 8px; }
+  @keyframes navpulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(128,128,128,0); }
+    50% { box-shadow: 0 0 0 3px rgba(128,128,128,.5); }
+  }
+
+  /* 员工详情弹窗 */
+  .emp-detail { width: 560px; max-width: 92vw; padding: 28px 28px 24px; position: relative; }
+  .emp-detail .detail-close {
+    position: absolute; top: 18px; right: 18px; border: none; background: none;
+    font-size: 18px; color: var(--muted); cursor: pointer; line-height: 1; padding: 4px;
+  }
+  .emp-detail .detail-close:hover { color: var(--fg); }
+  .emp-detail .detail-head { display: flex; flex-direction: column; gap: 12px; margin-bottom: 20px; }
+  .emp-detail .detail-avatar {
+    width: 52px; height: 52px; border-radius: 50%; background: var(--primary-muted);
+    color: var(--fg); display: flex; align-items: center; justify-content: center;
+    font-size: 20px; font-weight: 600;
+  }
+  .emp-detail h3.detail-title { font-size: 18px; margin: 0; color: var(--fg); }
+  .emp-detail .detail-sub { font-size: 12px; color: var(--muted); margin: 0; }
+  .emp-detail .detail-body {
+    background: var(--soft); border-radius: 16px; padding: 22px;
+    display: flex; flex-direction: column; gap: 16px;
+  }
+  .emp-detail .detail-block .block-label { font-size: 13px; font-weight: 600; margin-bottom: 8px; color: var(--fg); }
+  .emp-detail .detail-block p { font-size: 12px; color: var(--muted); line-height: 1.7; margin: 0; }
+  .emp-detail .detail-block ul { margin: 0; padding-left: 18px; display: flex; flex-direction: column; gap: 8px; }
+  .emp-detail .detail-block li { font-size: 12px; color: var(--muted); line-height: 1.7; }
+  .emp-detail .detail-divider { border-top: 1px solid var(--line); }
+  .emp-detail .detail-empty { font-size: 12px; color: var(--text-muted); }
+  .emp-detail .detail-foot { display: flex; justify-content: flex-end; gap: 12px; margin-top: 22px; }
+
+  /* 提取码弹窗 */
+  .modal-mask {
+    position: fixed; inset: 0; background: rgba(17,17,17,0.45); backdrop-filter: blur(2px);
+    display: none; align-items: center; justify-content: center; z-index: 999;
+  }
+  .modal-mask.show { display: flex; }
+  .modal {
+    background: var(--surface); border: none; padding: 24px 26px;
+    width: 340px; border-radius: 16px; box-shadow: var(--shadow-modal);
+    animation: pop .22s cubic-bezier(.2,.9,.3,1.2) both;
+  }
+  .modal h3 { font-size: 14px; margin-bottom: 14px; color: var(--fg); }
+  .modal p { font-size: 12px; color: var(--muted); margin-bottom: 14px; }
+
+  /* 技能配置弹窗：紧凑分区布局 */
+  .cfg-modal { padding: 24px; max-height: calc(100vh - 40px); overflow-y: auto; }
+  .cfg-modal h3 { margin-bottom: 16px; }
+  .cfg-section { margin-bottom: 16px; }
+  .cfg-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; margin-bottom: 12px; }
+  .cfg-label { font-size: 13px; font-weight: 500; color: var(--fg); }
+  .cfg-count { font-size: 11px; color: var(--muted); font-weight: 400; margin-left: 6px; }
+  .cfg-hint { font-size: 11px; color: var(--muted); margin-top: 3px; }
+  .cfg-actions { display: flex; gap: 10px; flex-shrink: 0; }
+  .btn.ghost.sm { font-size: 12px; padding: 6px 12px; border-radius: 10px; }
+  /* 长名单：名单区独立滚动，行高收紧，左侧序号 + 右侧小号删除按钮 */
+  #skillcfg-list { max-height: 300px; overflow-y: auto; padding-right: 4px; }
+  .cfg-contact-row { display: flex; gap: 10px; margin-bottom: 6px; align-items: center; }
+  .cfg-contact-row .cfg-index { width: 22px; flex-shrink: 0; text-align: right; font-size: 12px; color: var(--muted); }
+  .cfg-contact-row input { flex: 1; min-width: 0; padding: 6px 12px; font-size: 13px; }
+  .cfg-contact-row .btn.danger { padding: 5px 10px; font-size: 12px; border-radius: 8px; flex-shrink: 0; }
+  .cfg-start-row { margin-top: 12px; }
+  .cfg-start-row select { width: 100%; padding: 8px 12px; margin-top: 8px; border: 1px solid transparent; border-radius: 10px; background: var(--soft); color: var(--fg); font-size: 13px; }
+  .cfg-check { display: flex; align-items: flex-start; gap: 10px; margin: 14px 0 0; cursor: pointer; }
+  .cfg-check input { width: auto; margin-top: 2px; }
+  .cfg-check-title { font-size: 13px; color: var(--fg); }
+  .cfg-check-sub { display: block; font-size: 11px; color: var(--muted); margin-top: 2px; }
+
+  /* 滚动条（6px 细滚动条） */
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--ink-5); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--ink-4); }
+
+  /* ---- 面板入场错峰 ---- */
+  .panel.active > *:nth-child(1) { animation-delay: 0ms; }
+  .panel.active > *:nth-child(2) { animation-delay: 45ms; }
+  .panel.active > *:nth-child(3) { animation-delay: 90ms; }
+  .panel.active > *:nth-child(4) { animation-delay: 135ms; }
+  .panel.active > *:nth-child(5) { animation-delay: 180ms; }
+
+  /* ---- 控制卡（工作台） ---- */
+  .ctl { display: flex; flex-direction: column; gap: 10px; }
+  .ctl .head { display: flex; align-items: center; gap: 8px; }
+  .ctl .head h3 { font-size: 14px; font-weight: 600; margin: 0; }
+  .ctl .head .pill { margin-left: auto; }
+  .ctl .meta { font-size: 12px; color: var(--ink-3); line-height: 1.8; }
+  .ctl .meta b { color: var(--ink-1); font-weight: 500; }
+  .ctl .acts { display: flex; gap: 8px; margin-top: 2px; }
+
+  /* ---- 动态时间线 ---- */
+  .feed { display: flex; flex-direction: column; }
+  .feed .item { display: flex; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--line); }
+  .feed .item:last-child { border-bottom: none; }
+  .feed .fmark { width: 7px; height: 7px; border-radius: 50%; background: var(--ink-1); margin: 5px 0 0; flex-shrink: 0; }
+  .feed .fmark.hollow { background: var(--surface); border: 2px solid var(--ink-5); width: 5px; height: 5px; }
+  .feed .ftx { font-size: 12.5px; line-height: 1.6; }
+  .feed .ftx .t { color: var(--ink-4); font-size: 11px; margin-left: 8px; font-variant-numeric: tabular-nums; }
+
+  /* ---- 统计卡 ---- */
+  .stat { text-align: left; }
+  .stat .k { font-size: 11.5px; color: var(--ink-3); display: flex; align-items: center; gap: 5px; }
+  .stat .v { font-size: 26px; font-weight: 600; letter-spacing: -.02em; margin-top: 6px; font-variant-numeric: tabular-nums; }
+  .stat .d { font-size: 11px; color: var(--ink-4); margin-top: 3px; }
+  .stat .v em { font-style: normal; font-size: 12px; font-weight: 400; color: var(--ink-4); margin-left: 4px; }
+  .quick { cursor: pointer; }
+  .quick .k { font-size: 13.5px; font-weight: 600; color: var(--ink-1); }
+  .quick .d { margin-top: 6px; }
+
+  /* ---- 广场工具条 ---- */
+  .toolbar { display: flex; gap: 10px; align-items: center; margin-bottom: 16px; flex-wrap: wrap; }
+  .search { position: relative; flex: 0 1 300px; }
+  .search svg { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); color: var(--ink-4); pointer-events: none; }
+  .search input { padding-left: 32px; margin: 0; }
+  .chips { display: flex; gap: 6px; flex-wrap: wrap; margin-left: auto; }
+  .chip {
+    padding: 5px 12px; border-radius: 999px; font-size: 12px; cursor: pointer;
+    border: 1px solid var(--line); background: var(--surface); color: var(--ink-3); font-family: inherit;
+    transition: all .14s ease;
+  }
+  .chip:hover { border-color: var(--ink-1); color: var(--ink-1); }
+  .chip.active { background: var(--ink-1); color: #fff; border-color: var(--ink-1); font-weight: 500; }
+  .chip .n { opacity: .55; margin-left: 3px; font-variant-numeric: tabular-nums; }
+
+  /* ---- 头像 ---- */
+  .avatar {
+    width: 38px; height: 38px; border-radius: 50%; flex-shrink: 0;
+    background: var(--ink-1); color: #fff; font-size: 15px; font-weight: 600;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .avatar.lite { background: var(--soft); color: var(--ink-1); border: 1px solid var(--ink-5); font-weight: 500; }
+
+  /* ---- 实时监控终端 ---- */
+  .term-head { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; flex-wrap: wrap; }
+  .term-head .right { margin-left: auto; display: flex; gap: 8px; align-items: center; }
+  .scroll-toggle { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--ink-3); cursor: pointer; margin: 0; }
+  .term {
+    background: var(--ink-1); color: #E8E8E8; border-radius: var(--radius-l);
+    font-family: var(--mono); font-size: 12px; line-height: 1.9;
+    padding: 14px 16px; height: calc(100vh - 260px); min-height: 320px; overflow-y: auto;
+    box-shadow: var(--shadow-hover);
+  }
+  .term .ln { display: flex; gap: 10px; white-space: pre-wrap; word-break: break-all; }
+  .term .ln:hover { background: rgba(255,255,255,.05); }
+  .term .ts { color: #6E6E6E; flex-shrink: 0; font-variant-numeric: tabular-nums; }
+  .lvl { flex-shrink: 0; width: 46px; text-align: center; border-radius: 3px; font-size: 10px; line-height: 16px; margin-top: 2.5px; }
+  .lvl.info { color: #8A8A8A; }
+  .lvl.ok { background: #fff; color: #111; font-weight: 600; }
+  .lvl.warn { border: 1px solid #8A8A8A; color: #CFCFCF; font-weight: 600; }
+  .lvl.err { background: #fff; color: #111; font-weight: 700; }
+  .lvl.ai { border: 1px dashed #6E6E6E; color: #B5B5B5; }
+  .term-legend { display: flex; gap: 14px; margin-top: 10px; font-size: 11px; color: var(--ink-4); flex-wrap: wrap; align-items: center; }
+  .term-legend .lg { display: inline-flex; gap: 5px; align-items: center; }
+
+  /* ---- 设置表单 ---- */
+  .fgrid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px 18px; }
+  .form-card h3 { font-size: 13px; font-weight: 600; display: flex; align-items: center; gap: 7px; margin: 0 0 4px; }
+  .form-card .hint { font-size: 11.5px; color: var(--ink-4); margin-bottom: 6px; }
+  .form-card label.f { display: block; font-size: 12px; color: var(--ink-3); margin: 14px 0 6px; }
+  .num-wrap { position: relative; }
+  .num-wrap input { padding-right: 64px; font-variant-numeric: tabular-nums; }
+  .num-wrap .unit { position: absolute; right: 11px; top: 50%; transform: translateY(-50%); font-size: 11px; color: var(--ink-4); pointer-events: none; }
+  .switch-row { display: flex; align-items: center; gap: 10px; padding: 9px 0; }
+  .switch-row .st { font-size: 12.5px; }
+  .switch-row .ss { font-size: 11px; color: var(--ink-4); margin-top: 1px; }
+  .savebar {
+    position: sticky; bottom: 0; margin: 18px -20px -20px; padding: 12px 20px;
+    background: rgba(255,255,255,.92); backdrop-filter: blur(6px); border-top: 1px solid var(--line);
+    display: flex; align-items: center; gap: 10px; border-radius: 0 0 var(--radius-l) var(--radius-l);
+  }
+  .savebar .note { font-size: 11.5px; color: var(--ink-4); }
+  .savebar .right { margin-left: auto; display: flex; gap: 8px; }
+  .danger-zone { border-color: var(--ink-5); }
+  .danger-zone .zrow { display: flex; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px dashed var(--line); }
+  .danger-zone .zrow:last-child { border-bottom: none; }
+  .danger-zone .zt { font-size: 12.5px; font-weight: 500; }
+  .danger-zone .zs { font-size: 11px; color: var(--ink-4); margin-top: 2px; }
+  .danger-zone .btn { margin-left: auto; }
+
+  /* ---- 状态语言说明卡 ---- */
+  .legend-card { background: var(--soft); border-color: transparent; }
+  .legend-card h3 { font-size: 12px; font-weight: 600; display: flex; gap: 6px; align-items: center; margin: 0 0 10px; }
+  .legend-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px 18px; }
+  .legend-grid .li { display: flex; align-items: center; gap: 8px; font-size: 11.5px; color: var(--ink-3); }
+  .legend-grid .li .demo { flex-shrink: 0; }
+
+</style>
+</head>
+<body>
+<aside>
+  <div class="brand">
+    <div class="mark"><svg viewBox="0 0 24 24"><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M5.6 18.4l2.1-2.1M16.3 7.7l2.1-2.1"/><circle cx="12" cy="12" r="3.2"/></svg></div>
+    <div>
+      <div class="t">销售策略与高情商沟通官</div>
+      <div class="s">DIGITAL STAFF CONSOLE</div>
+    </div>
+  </div>
+
+  <nav id="nav">
+    <div class="nav-label">工作区</div>
+    <button data-panel="myemps" class="active">
+      <svg class="ic" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.4"/><path d="M3.5 20c.6-3.4 2.9-5.2 5.5-5.2s4.9 1.8 5.5 5.2"/><circle cx="17.5" cy="9.5" r="2.4"/><path d="M16 14.9c2.4.3 4 1.9 4.5 4.4"/></svg>
+      我的员工
+    </button>
+    <button data-panel="dash">
+      <svg class="ic" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg>
+      工作台
+    </button>
+    <button data-panel="emp">
+      <svg class="ic" viewBox="0 0 24 24"><path d="M4 8h16M4 8l1.5-4h13L20 8M4 8v11a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8"/><path d="M9 13h6"/></svg>
+      员工广场
+    </button>
+    <button data-panel="live">
+      <svg class="ic" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M7 9l3 3-3 3M12.5 15H17"/></svg>
+      实时监控<span class="run-ind" id="nav-run-ind" style="display:none"></span>
+    </button>
+    <button data-panel="stats">
+      <svg class="ic" viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-8M21 20H3"/></svg>
+      聊天日报
+    </button>
+    <button data-panel="moments">
+      <svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 3a15 15 0 0 1 0 18M12 3a15 15 0 0 0 0 18M3.6 9h16.8M3.6 15h16.8"/></svg>
+      朋友圈
+    </button>
+  </nav>
+
+  <div class="side-foot">
+    <button class="setting-btn" data-panel="settings">
+      <svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19 12a7 7 0 0 0-.15-1.4l2-1.55-2-3.46-2.35.97a7 7 0 0 0-2.4-1.4L13.7 3.5h-3.4l-.4 2.66a7 7 0 0 0-2.4 1.4l-2.35-.97-2 3.46 2 1.55A7 7 0 0 0 5 12c0 .48.05.95.15 1.4l-2 1.55 2 3.46 2.35-.97a7 7 0 0 0 2.4 1.4l.4 2.63h3.4l.4-2.63a7 7 0 0 0 2.4-1.4l2.35.97 2-3.46-2-1.55c.1-.45.15-.92.15-1.4z"/></svg>
+      设置
+    </button>
+  </div>
+</aside>
+
+<main>
+  <header class="topbar">
+    <h1 id="page-title">我的员工</h1>
+    <span class="sub" id="page-sub">微信可用的数字员工</span>
+    <div class="topbar-right">
+      <span class="pill" id="pill-monitor"><span class="dot" id="dot-monitor"></span>聊天监控 · <span id="status-monitor">未运行</span></span>
+      <span class="pill" id="pill-moments"><span class="dot" id="dot-moments"></span>朋友圈 · <span id="status-moments">未运行</span></span>
+    </div>
+  </header>
+
+  <div class="content">
+
+    <!-- ========== 工作台 ========== -->
+    <section class="panel" id="panel-dash">
+      <div class="grid-2">
+        <div class="card ctl">
+          <div class="head">
+            <h3>聊天监控</h3>
+            <span class="pill" id="dash-pill-monitor"><span class="dot" id="dash-dot-monitor"></span><span id="dash-status-monitor">未运行</span></span>
+          </div>
+          <div class="meta">
+            当前员工：<b id="dash-skill-name">未激活</b><br>
+            轮询联系人：<b id="dash-contacts-n">0</b> 个 · 轮询间隔 <b id="dash-poll-n">15</b> 秒
+          </div>
+          <div class="acts">
+            <button class="btn danger" id="dash-stop" data-danger="停止监控" data-action="stop-monitor" disabled>
+              <svg class="ic sm" viewBox="0 0 24 24"><path d="M12 3 2.5 20h19L12 3z"/><path d="M12 10v4M12 17.2v.1"/></svg>
+              <span class="lbl">停止监控</span>
+            </button>
+            <button class="btn" id="dash-start" onclick="startMonitor()">启动监控</button>
+            <button class="btn plain" onclick="go('live')">查看日志 →</button>
+          </div>
+        </div>
+        <div class="card ctl">
+          <div class="head">
+            <h3>朋友圈发布</h3>
+            <span class="pill" id="dash-pill-moments"><span class="dot" id="dash-dot-moments"></span><span id="dash-status-moments">未运行</span></span>
+          </div>
+          <div class="meta">从队列自动发，或到朋友圈页手动立即发一条</div>
+          <div class="acts">
+            <button class="btn" onclick="startMomentsQueue()">启动队列</button>
+            <button class="btn ghost" onclick="stopMoments()">停止</button>
+            <button class="btn plain" onclick="go('moments')">编辑朋友圈 →</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="card mt">
+        <div class="sec-head" style="margin-bottom:6px">
+          <h2>最近动态</h2>
+          <span class="note">自动跟踪监控事件</span>
+          <div class="right"><button class="btn plain sm" onclick="go('live')">全部日志 →</button></div>
+        </div>
+        <div class="feed" id="dash-feed">
+          <div class="item"><span class="fmark hollow"></span><div class="ftx muted">暂无动态，启动监控后自动跟踪</div></div>
+        </div>
+      </div>
+
+      <div class="grid-4 mt">
+        <div class="card hoverable quick" onclick="go('emp')"><div class="k">员工广场</div><div class="d muted">挑选数字员工，下载后配置激活</div></div>
+        <div class="card hoverable quick" onclick="go('myemps')"><div class="k">我的员工</div><div class="d muted">微信员工 / 已下载</div></div>
+        <div class="card hoverable quick" onclick="go('stats')"><div class="k">聊天日报</div><div class="d muted">按员工查看当日聊天成果</div></div>
+        <div class="card hoverable quick" onclick="go('settings')"><div class="k">设置</div><div class="d muted">策略、节奏与维护</div></div>
+      </div>
+
+      <div class="card legend-card mt">
+        <h3><svg class="ic sm" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8v.1"/></svg>黑白灰状态语言（本控制台的视觉约定）</h3>
+        <div class="legend-grid">
+          <div class="li"><span class="pill run demo" style="padding:2px 8px"><span class="dot on"></span></span>实心点 + 脉冲 = 运行中</div>
+          <div class="li"><span class="pill demo" style="padding:2px 8px"><span class="dot"></span></span>空心点 = 停止 / 空闲</div>
+          <div class="li"><span class="badge on demo">达成</span>实心徽章 = 达成 / 已激活</div>
+          <div class="li"><span class="badge outline demo">进行中</span>描边徽章 = 进行中</div>
+          <div class="li"><span class="badge demo">未达成</span>浅灰徽章 = 未达成</div>
+          <div class="li"><span class="badge dashed demo">转人工</span>虚线徽章 = 已转人工</div>
+          <div class="li"><button class="btn danger sm demo"><svg class="ic sm" viewBox="0 0 24 24"><path d="M12 3 2.5 20h19L12 3z"/><path d="M12 10v4M12 17.2v.1"/></svg><span class="lbl">危险</span></button>描边+⚠，两步确认 = 危险操作</div>
+          <div class="li"><span class="lvl err demo" style="background:#111;color:#fff">ERR</span>终端反白 = 错误级日志</div>
+          <div class="li"><span class="badge tag demo">主按钮实心</span>实心 = 主操作，其余降级</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========== 员工广场 ========== -->
+    <section class="panel" id="panel-emp">
+      <div class="sec-head" style="margin-bottom:12px">
+        <span class="note">这里只列微信可用的员工；办公、文案等其他员工请在外壳（x.HR）的员工广场查看</span>
+      </div>
+      <div class="toolbar">
+        <div class="search">
+          <svg class="ic sm" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="m16 16 4.5 4.5"/></svg>
+          <input type="text" id="emp-search" placeholder="搜索员工名称/描述…" oninput="renderEmpGrid()">
+        </div>
+        <select id="emp-category" style="max-width:170px;margin:0" onchange="renderEmpGrid()">
+          <option value="">全部分类</option>
+        </select>
+        <div class="chips"><button class="chip" onclick="loadEmployees()">刷新</button></div>
+      </div>
+      <div class="emp-grid" id="emp-grid">
+        <div class="muted">加载中…</div>
+      </div>
+    </section>
+
+    <!-- ========== 我的员工 ========== -->
+    <section class="panel active" id="panel-myemps">
+      <div class="sec-head">
+        <span class="note">已下载的置顶：点「使用」配置并激活；当前使用的那一行会高亮，按钮显示「使用中」</span>
+      </div>
+      <div class="chips" style="margin:0 10px 12px">
+        <button class="chip my-filter active" data-myfilter="all" onclick="setMyFilter('all')">全部</button>
+        <button class="chip my-filter" data-myfilter="mine" onclick="setMyFilter('mine')">我创建的</button>
+        <button class="chip my-filter" data-myfilter="downloaded" onclick="setMyFilter('downloaded')">广场下载</button>
+      </div>
+      <div class="emp-side-list" id="emp-my-list">
+        <div class="emp-me-item muted" style="cursor:default">加载中…</div>
+      </div>
+    </section>
+
+    <!-- ========== 朋友圈 ========== -->
+    <section class="panel" id="panel-moments">
+      <div class="grid-2">
+        <div class="card">
+          <h2 style="margin-top:0">立即发布</h2>
+          <label>文案</label>
+          <textarea id="m-text" rows="4" placeholder="今天天气不错"></textarea>
+          <label>图片路径（逗号分隔，本地绝对路径；素材图请放在 screenshots\moments 目录）</label>
+          <input id="m-images" placeholder="screenshots\moments\1.jpg, screenshots\moments\2.jpg">
+          <div class="row space">
+            <button class="btn" onclick="postNow()">立即发布</button>
+            <button class="btn ghost" onclick="startMomentsQueue()">启动队列</button>
+            <button class="btn ghost" onclick="stopMoments()">停止队列</button>
+          </div>
+        </div>
+        <div class="card">
+          <h2 style="margin-top:0">发布队列</h2>
+          <table>
+            <thead><tr><th>文案</th><th>状态</th><th>创建时间</th></tr></thead>
+            <tbody id="queue-rows"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========== 设置（策略 + 维护） ========== -->
+    <section class="panel" id="panel-settings">
+      <div class="card form-card">
+        <h3><svg class="ic sm" viewBox="0 0 24 24"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>角色与话术</h3>
+        <div class="hint">定义员工的人设与系统提示词正文，重启监控后生效</div>
+        <div id="s-ai_role-wrap">
+          <label class="f"><b>AI 角色设定</b></label>
+          <textarea id="s-ai_role" rows="3" placeholder="例：你是一个专业的顾问，语气自然，不卑不亢。"></textarea>
+        </div>
+        <label class="f"><b>策略文本（系统提示词正文）</b></label>
+        <textarea id="s-strategy_text" rows="12" placeholder="沟通策略、节奏、红线规则……"></textarea>
+      </div>
+
+      <div class="card form-card mt">
+        <h3><svg class="ic sm" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg>节奏控制</h3>
+        <div class="hint">模拟真人节奏，避免秒回与刷屏</div>
+        <div class="fgrid">
+          <div><label class="f">回复延迟</label><div class="num-wrap"><input id="s-min_reply_delay" type="number" value="0" style="margin:0"><span class="unit">秒</span></div></div>
+          <div><label class="f">逐条消息间隔</label><div class="num-wrap"><input id="s-send_interval" type="number" step="0.1" value="1" style="margin:0"><span class="unit">秒</span></div></div>
+          <div><label class="f">一次最多发</label><div class="num-wrap"><input id="s-max_reply" type="number" min="1" max="10" value="5" style="margin:0"><span class="unit">条</span></div></div>
+          <div><label class="f">轮询间隔</label><div class="num-wrap"><input id="s-poll_interval" type="number" min="1" value="15" style="margin:0"><span class="unit">秒</span></div></div>
+        </div>
+      </div>
+
+      <div class="card form-card mt">
+        <h3><svg class="ic sm" viewBox="0 0 24 24"><path d="M13 2 4 14h6l-1 8 9-12h-6l1-8z"/></svg>主动策略</h3>
+        <div class="hint">长时间无消息时，员工主动发起话题</div>
+        <div class="switch-row">
+          <button class="switch" id="s-proactive-sw" onclick="setProactive(!this.classList.contains('on'))"></button>
+          <div><div class="st">允许长时间无消息时主动发起话题</div><div class="ss">关闭后员工只被动回复</div></div>
+        </div>
+        <input type="checkbox" id="s-proactive" style="display:none">
+        <div class="fgrid">
+          <div><label class="f">首次破冰间隔</label><div class="num-wrap"><input id="s-proactive_interval" type="number" value="1800" style="margin:0"><span class="unit">秒</span></div></div>
+          <div><label class="f">第二次主动间隔</label><div class="num-wrap"><input id="s-proactive_second" type="number" value="3600" style="margin:0"><span class="unit">秒</span></div></div>
+          <div><label class="f">最多主动次数</label><div class="num-wrap"><input id="s-proactive_max" type="number" min="0" value="2" style="margin:0"><span class="unit">次 · 0=不限</span></div></div>
+        </div>
+        <div class="savebar">
+          <span class="note">保存后需重启监控生效</span>
+          <div class="right">
+            <button class="btn" onclick="saveStrategy()">保存策略</button>
+            <button class="btn" onclick="saveStrategy().then(restartMonitorConfirm())">保存并重启</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="card form-card mt danger-zone">
+        <h3><svg class="ic sm" viewBox="0 0 24 24"><path d="M12 3 2.5 20h19L12 3z"/><path d="M12 10v4M12 17.2v.1"/></svg>维护 · 危险区</h3>
+        <div class="hint">所有危险操作均为「点击 → 再点确认」两步式，3 秒内未确认自动解除</div>
+        <div class="zrow">
+          <div><div class="zt">清理截图 / 对比图</div><div class="zs">删除 compare 与 chat 截图，朋友圈素材保留，不可恢复</div></div>
+          <button class="btn danger" data-danger="清理截图" data-action="clean-shots"><span class="lbl">清理</span></button>
+        </div>
+        <div class="zrow">
+          <div><div class="zt">清理日志</div><div class="zs">删除 logs/ 下全部日志文件，不可恢复</div></div>
+          <button class="btn danger" data-danger="清理日志" data-action="clean-logs"><span class="lbl">清理</span></button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========== 聊天日报 ========== -->
+    <section class="panel" id="panel-stats">
+      <div class="toolbar">
+        <input type="date" id="stats-date" style="width:150px;margin:0" onchange="loadStats()">
+        <select id="stats-skill" style="width:220px;margin:0" onchange="renderStatsBySkill()"></select>
+        <button class="btn ghost sm" onclick="loadStats()">查询</button>
+        <div class="chips"><button class="chip" onclick="exportContacts()">导出名单</button></div>
+      </div>
+
+      <div class="grid-3">
+        <div class="card stat hoverable"><div class="k">今日在聊</div><div class="v" id="st-chatting">0</div><div class="d"><span class="badge outline">进行中</span> 描边徽章</div></div>
+        <div class="card stat hoverable"><div class="k">达成目标</div><div class="v" id="st-done">0</div><div class="d"><span class="badge on">达成</span> 实心徽章</div></div>
+        <div class="card stat hoverable"><div class="k">未达成</div><div class="v" id="st-pending">0</div><div class="d"><span class="badge dashed">转人工</span> 虚线徽章</div></div>
+      </div>
+
+      <div class="card mt" style="padding:8px 12px">
+        <table>
+          <thead><tr><th>联系人</th><th>聊天目标</th><th>消息数</th><th>最后活动</th><th>状态</th><th>说明</th></tr></thead>
+          <tbody id="stats-rows"><tr><td colspan="6" class="muted">加载中…</td></tr></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ========== 实时监控 ========== -->
+    <section class="panel" id="panel-live">
+      <div class="term-head">
+        <span class="pill" id="live-state"><span class="dot" id="live-dot"></span><span id="live-status">聊天监控未运行</span></span>
+        <span style="font-size:11.5px;color:var(--ink-4)" id="live-source"></span>
+        <div class="right">
+          <label class="scroll-toggle" onclick="toggleScroll(event)">
+            <button class="switch on" id="autoscroll"></button>自动滚动
+          </label>
+          <button class="btn danger" id="live-stop" data-danger="停止监控" data-action="stop-monitor" disabled>
+            <svg class="ic sm" viewBox="0 0 24 24"><path d="M12 3 2.5 20h19L12 3z"/><path d="M12 10v4M12 17.2v.1"/></svg>
+            <span class="lbl">停止监控</span>
+          </button>
+        </div>
+      </div>
+      <div class="term" id="live-content">等待日志输出…</div>
+      <div class="term-legend">
+        <span class="lg"><span class="lvl err">ERR</span>错误 · 反白最高强度</span>
+        <span class="lg"><span class="lvl warn">WARN</span>告警 · 描边加粗</span>
+        <span class="lg"><span class="lvl ok">OK</span>成功 · 实心反色</span>
+        <span class="lg"><span class="lvl ai">AI</span>模型调用 · 虚线</span>
+        <span class="lg"><span class="lvl info">INFO</span>常规 · 灰字</span>
+      </div>
+    </section>
+
+  </div>
+</main>
+
+<!-- 提取码弹窗 -->
+<div class="modal-mask" id="sharecode-mask">
+  <div class="modal">
+    <h3>私密员工 · 需要提取码</h3>
+    <p id="sharecode-tip">该员工为私密分享，请输入 4 位提取码。</p>
+    <label>提取码</label>
+    <input id="sharecode-input" maxlength="8" placeholder="例如 V8QT" style="text-transform:uppercase;letter-spacing:4px" onkeydown="if(event.key==='Enter')confirmShareCode()">
+    <div class="row space" style="justify-content:flex-end">
+      <button class="btn ghost" onclick="closeShareCode()">取消</button>
+      <button class="btn" onclick="confirmShareCode()">下载</button>
+    </div>
+  </div>
+</div>
+
+<!-- 员工详情弹窗 -->
+<div class="modal-mask" id="emp-detail-mask" onclick="if(event.target===this)closeEmpDetail()">
+  <div class="modal emp-detail">
+    <button class="detail-close" onclick="closeEmpDetail()">×</button>
+    <div class="detail-head">
+      <div class="detail-avatar" id="ed-avatar">?</div>
+      <h3 class="detail-title" id="ed-name"></h3>
+      <p class="detail-sub" id="ed-sub"></p>
+    </div>
+    <div class="detail-body">
+      <div class="detail-block">
+        <div class="block-label">用途</div>
+        <p id="ed-purpose"></p>
+      </div>
+      <div class="detail-block">
+        <div class="block-label">概述</div>
+        <p id="ed-overview"></p>
+      </div>
+      <div class="detail-block" id="ed-scene-block">
+        <div class="block-label">使用场景</div>
+        <ul id="ed-scene"></ul>
+      </div>
+      <div class="detail-divider"></div>
+      <div class="detail-empty">完整内容暂不支持展示</div>
+    </div>
+    <div class="detail-foot">
+      <button class="btn danger" id="ed-delete" style="display:none" data-danger="删除本地副本" data-action="del-detail"><span class="lbl">删除</span></button>
+      <button class="btn" id="ed-action"></button>
+    </div>
+  </div>
+</div>
+
+<!-- 技能配置弹窗 -->
+<div class="modal-mask" id="skillcfg-mask">
+  <div class="modal cfg-modal" style="width:520px;max-width:92vw">
+    <h3 id="skillcfg-title">配置员工</h3>
+
+    <div class="cfg-section">
+      <div class="cfg-head">
+        <div>
+          <div class="cfg-label">聊天联系人<span id="skillcfg-count" class="cfg-count"></span></div>
+          <div class="cfg-hint">微信备注名，可添加多个</div>
+        </div>
+        <div class="cfg-actions">
+          <input type="file" id="skillcfg-file" accept=".txt,.csv,.xlsx,.docx" style="display:none" onchange="importContactFile(this)">
+          <button class="btn ghost sm" onclick="$('skillcfg-file').click()">导入名单</button>
+          <button class="btn ghost sm" onclick="exportContacts()">导出名单</button>
+          <button class="btn ghost sm" onclick="addCfgContact()">+ 添加</button>
+        </div>
+      </div>
+      <div id="skillcfg-list"></div>
+      <div class="cfg-start-row">
+        <div class="cfg-label">起始联系人</div>
+        <div class="cfg-hint">从选中的联系人开始轮询，按名单顺序往下聊；默认从第一个开始</div>
+        <select id="skillcfg-start"></select>
+      </div>
+    </div>
+
+    <p class="muted" id="skillcfg-note" style="margin:2px 0 0"></p>
+
+    <label class="cfg-check">
+      <input type="checkbox" id="skillcfg-proactive">
+      <span>
+        <span class="cfg-check-title">允许主动发送消息</span>
+        <span class="cfg-check-sub">长时间没联系时主动打招呼</span>
+      </span>
+    </label>
+
+    <div class="row" style="justify-content:space-between;align-items:center;margin-top:16px">
+      <button class="btn danger sm" id="skillcfg-del" data-danger="删除" data-action="del-skill"><span class="lbl">删除该员工</span></button>
+      <div class="row" style="gap:8px">
+        <button class="btn ghost" onclick="closeSkillCfg()">取消</button>
+        <button class="btn" onclick="confirmSkillCfg()">激活</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const $ = id => document.getElementById(id);
+
+function toast(msg, ms=2500) {
+  let t = $('toast');
+  if (!t) {
+    t = document.createElement('div');
+    t.id = 'toast';
+    t.style.cssText = 'position:fixed;bottom:28px;left:50%;transform:translateX(-50%);background:var(--surface);color:var(--fg);padding:12px 18px;border:1px solid transparent;border-radius:12px;font-size:13px;z-index:9999;box-shadow:var(--shadow-hover)';
+    document.body.appendChild(t);
+  }
+  t.textContent = msg;
+  t.style.opacity = '1';
+  clearTimeout(t._timer);
+  t._timer = setTimeout(() => t.style.opacity = '0', ms);
+}
+
+// 下载进行态提示条：msg 非空显示（转圈+文案），传 null 移除
+function dlStatus(msg) {
+  const old = $('dl-status');
+  if (old) old.remove();
+  if (!msg) return;
+  const el = document.createElement('div');
+  el.id = 'dl-status';
+  el.innerHTML = `<span class="dl-spin"></span><span>${escapeHtml(msg)}</span>`;
+  document.body.appendChild(el);
+}
+
+// 下载完成后脉冲提示「我的员工」入口，引导用户去配置使用
+function pulseMyempsEntry() {
+  const b = document.querySelector('[data-panel="myemps"]');
+  if (!b) return;
+  b.classList.remove('nav-pulse');
+  void b.offsetWidth;
+  b.classList.add('nav-pulse');
+  setTimeout(() => b.classList.remove('nav-pulse'), 2600);
+}
+
+// ---------- API 封装 ----------
+async function api(path, opts={}) {
+  const r = await fetch(path, opts);
+  return r.json();
+}
+async function getConfig(name) { return api(`/api/config/${name}`); }
+async function putConfig(name, obj) {
+  return api(`/api/config/${name}`, {method:'PUT', headers:{'Content-Type':'application/json'}, body: JSON.stringify(obj)});
+}
+
+// ---------- 状态轮询 ----------
+async function refreshStatus() {
+  const s = await api('/api/status');
+  const running = !!(s.monitor && s.monitor.running);
+  const momentsOn = !!(s.moments && s.moments.running);
+  // 顶栏胶囊
+  $('dot-monitor').classList.toggle('on', running);
+  $('dot-moments').classList.toggle('on', momentsOn);
+  $('status-monitor').textContent = running ? `运行中 pid=${s.monitor.pid}` : '未运行';
+  $('status-moments').textContent = momentsOn ? `运行中 pid=${s.moments.pid}` : '未运行';
+  $('pill-monitor').classList.toggle('run', running);
+  $('pill-moments').classList.toggle('run', momentsOn);
+  // 工作台控制卡
+  $('dash-dot-monitor').classList.toggle('on', running);
+  $('dash-status-monitor').textContent = running ? `运行中 · pid=${s.monitor.pid}` : '未运行';
+  $('dash-pill-monitor').classList.toggle('run', running);
+  $('dash-dot-moments').classList.toggle('on', momentsOn);
+  $('dash-status-moments').textContent = momentsOn ? `运行中 · pid=${s.moments.pid}` : '队列空闲';
+  $('dash-pill-moments').classList.toggle('run', momentsOn);
+  $('dash-stop').disabled = !running;
+  $('dash-start').style.display = running ? 'none' : '';
+  // 实时监控页
+  const st = $('live-state'), dot = $('live-dot'), txt = $('live-status'), btn = $('live-stop');
+  st.classList.toggle('run', running);
+  dot.classList.toggle('on', running);
+  txt.textContent = running ? `聊天监控运行中 · pid=${s.monitor.pid}` : '聊天监控未运行';
+  btn.disabled = !running;
+  // 侧栏：运行指示
+  $('nav-run-ind').style.display = running ? '' : 'none';
+}
+setInterval(refreshStatus, 2000);
+
+// ---------- 启动/停止 ----------
+const startMonitor = () => api('/api/monitor/start', {method:'POST'}).then(refreshStatus);
+const stopMonitor  = () => api('/api/monitor/stop',  {method:'POST'}).then(refreshStatus);
+// 停止按钮走两步确认（[data-danger] 处理器），避免手滑把跑到一半的监控停掉
+async function stopMonitorConfirm() {
+  const d = await api('/api/monitor/stop', {method:'POST'});
+  await refreshStatus();
+  toast(d && d.ok ? '聊天监控已停止' : `停止失败：${(d && d.error) || '未知原因'}`);
+}
+// 重启监控（改完联系人/策略后必须重启才生效）
+async function restartMonitorConfirm() {
+  const contacts = (contactsData.contacts || []).filter(c => c.name);
+  if (!contacts.length) { toast('请先保存至少一个联系人'); return; }
+  await api('/api/config/contacts', {method:'PUT', headers:{'Content-Type':'application/json'},
+    body: JSON.stringify(contactsData)});
+  await api('/api/monitor/stop', {method:'POST'});
+  await new Promise(r => setTimeout(r, 800));
+  const d = await api('/api/monitor/start', {method:'POST'});
+  await refreshStatus();
+  toast(d && d.ok ? `已重启监控，${contacts.length} 个联系人` : `重启失败：${(d && d.error) || ''}`);
+}
+const startMomentsQueue = () => api('/api/moments/start-queue', {method:'POST'}).then(refreshStatus);
+const stopMoments  = () => api('/api/moments/stop',  {method:'POST'}).then(refreshStatus);
+
+async function cleanScreenshots() {
+  const r = await api('/api/cleanup/screenshots', {method:'POST'});
+  toast(`已删除 ${r.removed} 个文件，释放 ${(r.freed_bytes/1024/1024).toFixed(1)} MB`);
+}
+async function cleanLogs() {
+  const r = await api('/api/cleanup/logs', {method:'POST'});
+  toast(`已删除 ${r.removed} 个文件，释放 ${(r.freed_bytes/1024/1024).toFixed(1)} MB`);
+  pollLive();
+}
+
+async function postNow() {
+  const text = $('m-text').value;
+  const images = $('m-images').value.split(',').map(s=>s.trim()).filter(Boolean);
+  await api('/api/moments/post', {method:'POST', headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({text, images})});
+  toast('已触发发布，请看微信窗口');
+}
+
+// ---------- 联系人 ----------
+let contactsData = {contacts:[]};
+async function loadContacts() {
+  contactsData = await getConfig('contacts');
+  renderContactRows();
+  updateDashMeta();
+}
+function renderContactRows() {
+  const tb = $('contact-rows');
+  if (!tb) return;   // 「聊天监控」页已删除；联系人只在配置弹窗里维护
+  tb.innerHTML = '';
+  contactsData.contacts.forEach((c, i) => {
+    tb.innerHTML += `<tr>
+      <td><input value="${c.name||''}" onchange="contactsData.contacts[${i}].name=this.value"></td>
+      <td><input value="${c.gender||''}" style="max-width:80px" onchange="contactsData.contacts[${i}].gender=this.value"></td>
+      <td><input value="${c.chat_goal||''}" placeholder="${(contactsData.default_chat_goal||'默认目标').replace(/"/g,'&quot;')}" onchange="contactsData.contacts[${i}].chat_goal=this.value"></td>
+      <td><button class="btn danger" onclick="contactsData.contacts.splice(${i},1);renderContactRows()">删</button></td>
+    </tr>`;
+  });
+}
+const addContactRow = () => { contactsData.contacts.push({name:'',gender:'未知',chat_goal:''}); renderContactRows(); };
+const saveContacts = async () => {
+  await putConfig('contacts', contactsData);
+  toast('已保存，点「重启监控生效」后按新名单轮询');
+};
+
+// ---------- 朋友圈队列 ----------
+async function loadQueue() {
+  const q = await getConfig('moments_queue');
+  const tb = $('queue-rows'); tb.innerHTML = '';
+  (q.items||[]).forEach(it => {
+    tb.innerHTML += `<tr>
+      <td>${(it.text||'').slice(0,40)}</td>
+      <td><span class="badge ${it.status==='done'?'on':'tag'}">${it.status||'pending'}</span></td>
+      <td>${it.created_at||''}</td>
+    </tr>`;
+  });
+}
+
+// ---------- 策略 ----------
+let strategyRoleAvailable = true;   // 下载的技能里带不带「角色设定」，不带就把这个输入框整个藏掉
+async function loadStrategy() {
+  const s = await getConfig('strategy');
+  let info = {has_role: true};
+  try { info = await api('/api/skills/role'); } catch(e) {}
+  strategyRoleAvailable = info.has_role !== false;
+  const roleWrap = $('s-ai_role-wrap');
+  if (roleWrap) roleWrap.style.display = strategyRoleAvailable ? '' : 'none';
+  $('s-ai_role').value = strategyRoleAvailable ? (s.ai_role || '') : '';
+  $('s-strategy_text').value = s.strategy_text || '';
+  $('s-min_reply_delay').value = s.min_reply_delay_seconds ?? 0;
+  $('s-proactive_interval').value = s.proactive_interval_seconds ?? 1800;
+  $('s-proactive_second').value = s.proactive_second_interval_seconds ?? 3600;
+  $('s-proactive_max').value = s.proactive_max_attempts ?? 2;
+  setProactive(!!s.proactive_enabled);
+  $('s-send_interval').value = s.send_message_interval ?? 1;
+  $('s-max_reply').value = s.max_reply_messages ?? 5;
+  $('s-poll_interval').value = s.poll_interval ?? 15;
+  $('dash-poll-n').textContent = s.poll_interval ?? 15;
+}
+async function saveStrategy() {
+  const cur = await getConfig('strategy');
+  // 技能里没有角色设定时这个框是隐藏的，别把已有的值冲掉，也别再往提示词里加【角色设定】前缀
+  cur.ai_role = strategyRoleAvailable ? $('s-ai_role').value : '';
+  cur.strategy_text = $('s-strategy_text').value;
+  cur.min_reply_delay_seconds = Number($('s-min_reply_delay').value)||0;
+  cur.proactive_interval_seconds = Number($('s-proactive_interval').value)||1800;
+  cur.proactive_second_interval_seconds = Number($('s-proactive_second').value)||3600;
+  cur.proactive_max_attempts = Number($('s-proactive_max').value)||0;
+  cur.proactive_enabled = $('s-proactive').checked;
+  cur.send_message_interval = Number($('s-send_interval').value)||1;
+  cur.max_reply_messages = Number($('s-max_reply').value)||5;
+  cur.poll_interval = Number($('s-poll_interval').value)||15;
+  await putConfig('strategy', cur);
+  toast('已保存，重启监控后生效');
+}
+
+// ---------- API 配置 ----------
+async function loadUserConfig() {
+  if (!$('a-key')) return;   // API 设置面板已隐藏，别再去找里面的控件
+  const u = await getConfig('user');
+  const l = u.lobster || {};
+  $('a-key').value = l.api_key || '';
+  $('a-baseurl').value = l.base_url || '';
+  $('a-model').value = l.model || '';
+  $('a-fallbacks').value = (l.model_fallbacks||[]).join(', ');
+}
+async function saveUserConfig() {
+  const cur = await getConfig('user');
+  cur.lobster = cur.lobster || {};
+  cur.lobster.api_key = $('a-key').value;
+  cur.lobster.base_url = $('a-baseurl').value;
+  cur.lobster.model = $('a-model').value;
+  cur.lobster.model_fallbacks = $('a-fallbacks').value.split(',').map(s=>s.trim()).filter(Boolean);
+  await putConfig('user', cur);
+  alert('已保存');
+}
+
+// ---------- 聊天日报（按技能拆分，只展示微信技能） ----------
+let statsCache = null;
+let statsSkillList = [];
+
+const emptyStatsSummary = () => ({ total_contacts: 0, chatting_today: 0, achieved: 0, not_achieved: 0 });
+
+// 本地下载记录缺 tags/rpa_compatible，用平台全量 empAll 按 id/name 补齐后再走现有分类口径
+function enrichSkill(rec) {
+  const id = String(rec.id || '');
+  const name = String(rec.name || '');
+  let hit = null;
+  if (id) hit = (empAll || []).find(e => String(e.id) === id);
+  if (!hit) hit = (empAll || []).find(e => e.name === name);
+  const tags = hit ? hit.tags : rec.tags;
+  const rpa = hit ? hit.rpa_compatible : rec.rpa_compatible;
+  const cls = classify(tags, rpa);
+  // 平台列表匹配不到（离线 / 早期下载记录）：默认保留为微信候选，避免离线日报空表
+  const isWechat = hit ? cls.isWechat : true;
+  return { id, name, tags, rpa, isWechat };
+}
+
+async function loadStats() {
+  const d = $('stats-date').value || new Date().toISOString().slice(0,10);
+  const r = await api('/api/stats?date=' + d);
+  statsCache = r;
+
+  let downloaded = [];
+  try { downloaded = (await (await fetch('/api/downloaded')).json()) || []; } catch (e) {}
+
+  const byName = {};
+  (r.skills || []).forEach(g => { byName[g.name] = g; });
+
+  const merged = [];
+  const seen = new Set();
+  const push = (rec) => {
+    const en = enrichSkill(rec);
+    if (!en.name || seen.has(en.name)) return;
+    seen.add(en.name);
+    const g = byName[en.name];
+    merged.push({ ...en, summary: g ? g.summary : emptyStatsSummary(), rows: g ? g.rows : [] });
+  };
+  downloaded.forEach(push);
+  (r.skills || []).forEach(g => push(g));
+
+  statsSkillList = merged.filter(s => s.isWechat);
+  fillStatsSkillSelect();
+  renderStatsBySkill();
+}
+
+function fillStatsSkillSelect() {
+  const sel = $('stats-skill');
+  if (!sel) return;
+  const prev = sel.value;
+  // 默认选中：当前激活技能 > 上次选中 > 第一个
+  const activeName = (contactsData && contactsData.skill_name) || '';
+  const activeId = localStorage.getItem('active_skill_id') || '';
+  let def = '';
+  if (activeName) def = (statsSkillList.find(s => s.name === activeName) || {}).name || '';
+  if (!def && activeId) def = (statsSkillList.find(s => String(s.id) === String(activeId)) || {}).name || '';
+  if (!def) def = (statsSkillList.find(s => s.name === prev) || {}).name || '';
+  if (!def) def = (statsSkillList[0] || {}).name || '';
+
+  sel.innerHTML = statsSkillList.length
+    ? statsSkillList.map(s => `<option value="${s.name}">${s.name}${s.id ? ' · ID ' + s.id : ''}</option>`).join('')
+    : '<option value="">暂无微信技能</option>';
+  sel.value = def || '';
+}
+
+function renderStatsBySkill() {
+  const sel = $('stats-skill');
+  const cur = sel ? sel.value : '';
+  const sk = statsSkillList.find(s => s.name === cur) || statsSkillList[0];
+  const tb = $('stats-rows');
+  if (!sk) {
+    $('st-chatting').textContent = 0;
+    $('st-done').textContent = 0;
+    $('st-pending').textContent = 0;
+    tb.innerHTML = '<tr><td colspan="6" class="muted">暂无微信技能</td></tr>';
+    return;
+  }
+  $('st-chatting').textContent = sk.summary.chatting_today;
+  $('st-done').textContent = sk.summary.achieved;
+  $('st-pending').textContent = sk.summary.not_achieved;
+  const rows = sk.rows || [];
+  if (!rows.length) {
+    tb.innerHTML = '<tr><td colspan="6" class="muted">这一天没有聊天记录</td></tr>';
+    return;
+  }
+  tb.innerHTML = '';
+  rows.forEach(row => {
+    const badge = row.status === 'done'
+      ? '<span class="badge on">达成</span>'
+      : row.status === 'handoff'
+        ? '<span class="badge dashed">已转人工</span>'
+      : row.status === 'pending'
+        ? '<span class="badge">未达成</span>'
+        : '<span class="badge tag">未聊天</span>';
+    tb.innerHTML += `<tr>
+      <td><b>${row.name}</b></td>
+      <td>${row.goal || '<span class="muted">--</span>'}</td>
+      <td>${row.msg_count}</td>
+      <td>${row.last_active}</td>
+      <td>${badge}</td>
+      <td class="muted">${row.note || ''}</td>
+    </tr>`;
+  });
+}
+
+// ---------- 实时日志 ----------
+function escapeHtml(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+const LOG_LEVELS = [
+  [/\b(ERROR|CRITICAL|Traceback)\b|失败|错误|异常/, 'err', 'ERR'],
+  [/\bWARN(ING)?\b|置信度低|警告|重试/, 'warn', 'WARN'],
+  [/已发送|发送成功|\bOK\b|成功|已回复|送达|完成/, 'ok', 'OK'],
+  [/生成|模型|\bAI\b|LLM|提示词/, 'ai', 'AI'],
+];
+function classifyLogLine(line) {
+  for (const [re, cls, label] of LOG_LEVELS) if (re.test(line)) return [cls, label];
+  return ['info', 'INFO'];
+}
+async function pollLive() {
+  try {
+    const r = await api('/api/logs/live');
+    if (r.content) {
+      const box = $('live-content');
+      const lines = String(r.content).split('\n').filter(l => l.trim());
+      const parsed = lines.map(l => {
+        let ts = '', msg = l;
+        const m = l.match(/^\s*\d{4}-\d{2}-\d{2}[T ](\d{2}:\d{2}:\d{2})/);
+        if (m) { ts = m[1]; msg = l.slice(m[0].length); }
+        msg = msg.replace(/^[\s\-–—\[\]:：]+/, '').replace(/^(DEBUG|INFO|WARNING|WARN|ERROR|CRITICAL)\b[\s:：-]*/i, '').trim();
+        const [cls, label] = classifyLogLine(l);
+        return { ts, cls, label, msg };
+      });
+      box.innerHTML = parsed.map(p => `<div class="ln"><span class="ts">${p.ts}</span><span class="lvl ${p.cls}">${p.label}</span><span>${escapeHtml(p.msg)}</span></div>`).join('') || '等待日志输出…';
+      renderDashFeed(parsed.slice(-8).reverse());
+      if ($('autoscroll').classList.contains('on')) box.scrollTop = box.scrollHeight;
+      $('live-source').textContent = r.name ? `· ${r.name} · 每 3s 刷新` : '';
+    }
+  } catch (e) { /* 后端还没起来时静默 */ }
+}
+setInterval(pollLive, 3000);
+function toggleScroll(e) {
+  if (e) e.preventDefault();
+  const s = $('autoscroll');
+  s.classList.toggle('on');
+  if (s.classList.contains('on')) { const b = $('live-content'); b.scrollTop = b.scrollHeight; }
+}
+// 工作台「最近动态」：取最新 8 条日志，err/ok/warn 实心点，info/ai 空心点
+function renderDashFeed(items) {
+  const feed = $('dash-feed');
+  if (!feed) return;
+  if (!items.length) {
+    feed.innerHTML = '<div class="item"><span class="fmark hollow"></span><div class="ftx muted">暂无动态，启动监控后自动跟踪</div></div>';
+    return;
+  }
+  feed.innerHTML = items.map(p => `<div class="item"><span class="fmark ${(p.cls === 'err' || p.cls === 'ok' || p.cls === 'warn') ? '' : 'hollow'}"></span><div class="ftx">${escapeHtml(p.msg.slice(0, 60))}<span class="t">${p.ts}</span></div></div>`).join('');
+}
+
+// ---------- 员工工作台 ----------
+const SKILL_API = '/skills-api';
+let empAll = [];
+// 全量员工（不过滤），仅用于识别本地已下载项属于哪个客户端
+let empAllRaw = [];
+let downloadedNames = new Set();   // 已下载员工名，用来决定卡片显示「下载」还是「使用」
+let pendingDownloadId = null;
+let pendingSkillName = '';
+let downloadingId = null;          // 正在下载的平台员工 id，按钮转圈+禁点，同一时间只允许一个
+
+async function initToken() {
+  try {
+    const r = await fetch('/api/session');
+    const s = await r.json();
+    if (s.authenticated && s.access_token) {
+      localStorage.setItem('access_token', s.access_token);
+      localStorage.setItem('username', s.username || '');
+      // 用来区分「我创建的」与「从广场下载的别人的员工」
+      localStorage.setItem('user_id', String(s.user_id || 0));
+    }
+  } catch (e) {}
+}
+
+function getToken() {
+  return localStorage.getItem('access_token') || '';
+}
+
+// ---------- 技能分类（与手机端 src/config/skillTags.ts 同词汇表的镜像） ----------
+// ⚠️ 分类口径的唯一来源是 skill-builder 的 skillTags.ts；那边改词汇表必须同步改这里。
+// 铁律：只用 includes() 判定，不能按下标取——微信 tags[1] 是角色，分析 tags[1] 是「官方」。
+const TAG = {
+  wechat: 'wechat', copywriting: 'copywriting', pc: 'pc', official: '官方',
+  roles: ['销售助手', '顾问助手', '聊天助手'],
+};
+function classify(tags, rpa) {
+  const t = tags || [];
+  const isWechat = t.includes(TAG.wechat) || (!!rpa && !t.includes(TAG.copywriting));
+  return {
+    isWechat,
+    role: TAG.roles.find(r => t.includes(r)) || null,
+    isPc: !!rpa || t.includes(TAG.pc),
+    isOfficial: t.includes(TAG.official),
+  };
+}
+function classOf(s) { return classify(s.tags, s.rpa_compatible); }
+
+// 循环翻页拉全量：本地分类的前提是拿到完整集合，只取第一页会让后面的员工凭空消失。
+// 后端 pages 缺失时用 total/100 兜底；中途失败保留已加载部分并提示。
+async function fetchAllSkills() {
+  const out = [];
+  const seen = new Set();
+  let page = 1, pages = 1, total = -1, partial = false;
+  try {
+    do {
+      const r = await fetch(`${SKILL_API}/skills?page=${page}&per_page=100`, {
+        headers: { 'Authorization': 'Bearer ' + getToken() }
+      });
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      const data = await r.json();
+      const batch = data.skills || [];
+      if (!batch.length) break;
+      for (const s of batch) { if (!seen.has(s.id)) { seen.add(s.id); out.push(s); } }
+      total = Number(data.total) || total;
+      pages = Number(data.pages) > 0 ? Number(data.pages)
+        : Math.max(1, Math.ceil((total > 0 ? total : out.length) / 100));
+      page++;
+    } while (page <= pages && page <= 50);
+  } catch (e) {
+    if (!out.length) throw e;   // 第一页就失败：照常抛，走「加载失败」
+    partial = true;             // 已有部分数据：降级返回
+  }
+  return { skills: out, partial };
+}
+
+// 是否为微信可用员工（口径与壳子侧边栏一致：tags 含 wechat/微信）
+function isWechatSkill(s) {
+  const raw = Array.isArray(s && s.tags) ? s.tags : [];
+  const tags = raw.map(t => String(t).toLowerCase());
+  return ['wechat', '微信', '微信客服', '微信聊天'].some(t => tags.includes(t.toLowerCase()));
+}
+
+async function loadEmployees() {
+  const grid = $('emp-grid');
+  grid.innerHTML = '<div class="muted">加载中…</div>';
+  try {
+    const { skills, partial } = await fetchAllSkills();
+    // 本客户端只承载微信类员工：广场也按同一口径收窄，
+    // 避免列出下载后跑不起来的其他员工（全量清单在外壳 x.HR 的员工广场）。
+    empAllRaw = skills || [];
+    empAll = (skills || []).filter(isWechatSkill);
+    try {
+      const dr = await (await fetch('/api/downloaded')).json();
+      downloadedNames = new Set((dr || []).map(d => d.name));
+    } catch (e) {}
+    // 分类下拉：只保留三个角色项 + 全部。
+    // 广场里已经没有非微信员工，所以「其他」这一项去掉（永远为 0，纯噪音）。
+    const sel = $('emp-category');
+    const cur = sel.value;
+    const n = (r) => empAll.filter(s => classOf(s).role === r).length;
+    const opts = [
+      ['__all', `全部 (${empAll.length})`],
+      ...TAG.roles.map(r => [r, `${r} (${n(r)})`]),
+    ];
+    sel.innerHTML = opts.map(([v, t]) => `<option value="${v}">${t}</option>`).join('');
+    // 旧选中值在新列表里不存在时回落到全部
+    sel.value = opts.some(o => o[0] === cur) ? cur : '__all';
+    if (partial) toast('部分数据加载失败，列表可能不完整');
+    renderEmpGrid();
+  } catch (e) {
+    grid.innerHTML = '<div class="muted">加载失败：' + e.message + '</div>';
+  }
+
+  // 我的员工：已下载置顶显示「使用」，未下载显示「下载」
+  await renderMyList();
+}
+
+let myRows = [];
+let myRowsAll = [];
+let myFilter = 'all';   // all / mine / downloaded
+let downloadedMap = new Map();
+
+// 平台记录 → 是否微信员工；查不到归属时按微信员工处理，不乱判
+function ownerIsWechat(name) {
+  const hit = (empAllRaw || []).find(e => e.name === name);
+  return hit ? isWechatSkill(hit) : true;
+}
+
+function setMyFilter(f) {
+  myFilter = f;
+  document.querySelectorAll('.my-filter').forEach(b => b.classList.toggle('active', b.dataset.myfilter === f));
+  renderMyRows();
+}
+
+function renderMyRows() {
+  const list = $('emp-my-list');
+  const rows = (myRowsAll || []).filter(r => {
+    if (myFilter === 'mine') return r.mine;
+    if (myFilter === 'downloaded') return r.hasLocal && !r.mine;
+    return true;
+  });
+  myRows = rows;
+
+  if (!rows.length) {
+    const txt = myFilter === 'mine'
+      ? '还没有自己创建的员工'
+      : myFilter === 'downloaded' ? '还没有从广场下载别人的员工' : '暂无微信员工，去「员工广场」挑选';
+    list.innerHTML = `<div class="emp-me-item muted" style="cursor:default">${txt}</div>`;
+    return;
+  }
+
+  list.innerHTML = rows.map((s, i) => {
+    const idTxt = s.id ? 'ID ' + s.id : 'ID 未知（早期下载未记录）';
+    const pub = s.isPublic === false ? ' · 私密' : (s.isPublic ? ' · 公开' : '');
+    const wx = s.notWechat ? ' · <span style="color:#b26a00">非微信员工，请在 x.HR 完整版使用</span>' : '';
+    const inUse = !!s.active;
+    const used = inUse ? ' · <span style="color:#0a7a3d">当前使用</span>' : '';
+    // 来源：自己创建 / 广场下载（带作者）
+    const src = s.mine
+      ? '<span class="src-tag mine">我创建的</span>'
+      : (s.author
+        ? `<span class="src-tag">来自 ${escapeHtml(s.author)}</span>`
+        : (s.hasLocal ? '<span class="src-tag">早期下载</span>' : '<span class="src-tag">广场员工</span>'));
+    // 已下载：当前使用显示「使用中」（点开可改配置），其余显示「使用」
+    const btn = s.hasLocal
+      ? (inUse
+        ? `<button class="side-btn" onclick="useSkillRow(${i})">使用中</button>`
+        : `<button class="side-btn primary" onclick="useSkillRow(${i})">使用</button>`)
+      : downloadingId === String(s.id)
+        ? `<button class="side-btn" disabled><span class="dl-spin"></span>下载中</button>`
+        : `<button class="side-btn" onclick="downloadRow(${i})">下载</button>`;
+    return `
+      <div class="emp-side-row${inUse ? ' in-use' : ''}"${s.notWechat ? ' style="opacity:.62"' : ''}>
+        <div style="min-width:0;flex:1">
+          <div class="nm">${escapeHtml(s.name)} <span class="ver" style="color:var(--text-muted)">v${escapeHtml(s.version||'')}</span> ${src}</div>
+          <div class="meta">${idTxt}${pub}${used}${wx}</div>
+        </div>
+        ${btn}
+      </div>`;
+  }).join('');
+}
+
+async function renderMyList() {
+  let downloaded = [];
+  try {
+    const r = await fetch('/api/downloaded');
+    downloaded = (await r.json()) || [];
+  } catch (e) { downloaded = []; }
+
+  downloadedMap = new Map(downloaded.map(d => [d.name, d]));
+  downloadedNames = new Set(downloaded.map(d => d.name));
+
+  const platByName = new Map((empAll || []).map(e => [e.name, e]));
+  // 「当前使用」以落盘配置为唯一权威，每次渲染都回读，不吃启动时的旧缓存
+  let activeName = '';
+  try {
+    const c = await getConfig('contacts');
+    activeName = String(c.skill_name || '').trim();
+    contactsData.skill_name = activeName;
+    contactsData.skill_id = String(c.skill_id || '').trim();
+  } catch (e) {
+    activeName = String(contactsData.skill_name || '').trim();
+  }
+  const myId = Number(localStorage.getItem('user_id') || 0);
+  const rows = [];
+
+  // 1) 已下载的全部置顶（含平台已下架的历史项，否则没法使用/删除）
+  downloaded.forEach(d => {
+    const hit = platByName.get(d.name) || null;
+    const raw = (empAllRaw || []).find(e => e.name === d.name) || null;
+    const meta = hit || raw;
+    rows.push({
+      name: d.name,
+      version: d.version || (hit && hit.version) || '',
+      id: d.id || (hit && hit.id) || (raw && raw.id) || '',
+      isPublic: hit ? hit.is_public : undefined,
+      hasLocal: true,
+      notWechat: raw ? !isWechatSkill(raw) : false,
+      active: d.name === activeName,
+      mine: meta ? Number(meta.creator_id) === myId && myId > 0 : false,
+      author: meta && myId > 0 && Number(meta.creator_id) !== myId ? (meta.creator_username || '') : '',
+    });
+  });
+
+  // 2) 平台上有、本地还没有的排在后面：只列我创建的，别人的广场员工不进首屏，新用户保持空白
+  (empAll || []).forEach(e => {
+    if (downloadedNames.has(e.name)) return;
+    if (!(Number(e.creator_id) === myId && myId > 0)) return;
+    rows.push({
+      name: e.name,
+      version: e.version || '',
+      id: e.id || '',
+      isPublic: e.is_public,
+      hasLocal: false,
+      notWechat: false,
+      active: false,
+      mine: Number(e.creator_id) === myId && myId > 0,
+      author: myId > 0 && Number(e.creator_id) !== myId ? (e.creator_username || '') : '',
+    });
+  });
+
+  // 排序：① 我创建的优先 ② 已下载优先 ③ 当前使用的排最前
+  // 这样「我创建的」里下载过的始终在组内最上面，也不会被别人的下载挤到下面
+  rows.sort((a, b) =>
+    (Number(b.mine) - Number(a.mine))
+    || (Number(b.hasLocal) - Number(a.hasLocal))
+    || (Number(b.active) - Number(a.active)));
+
+  myRowsAll = rows;
+  renderMyRows();
+}
+
+// 从落盘配置读「当前使用」员工：每次进入面板都重新拉，避免各窗口各自缓存导致标签打架
+async function refreshActiveSkill() {
+  let name = '', sid = '';
+  try {
+    const c = await getConfig('contacts');
+    name = String(c.skill_name || '').trim();
+    sid = String(c.skill_id || '').trim();
+    contactsData.skill_name = name;
+    contactsData.skill_id = sid;
+  } catch (e) {}
+  // 副标题直接给出当前员工，不用去长列表里翻
+  if (document.querySelector('.panel.active')?.id === 'panel-myemps') {
+    $('page-sub').textContent = name ? `当前使用：${name}` : '还没有选中要使用的员工';
+  }
+  if (empAll && empAll.length) await renderMyList();
+  updateDashMeta();
+  return name;
+}
+
+function useSkillRow(i) {
+  const s = myRows[i];
+  if (!s) return;
+  openSkillCfg({ name: s.name, id: s.id, version: s.version });
+}
+
+function downloadRow(i) {
+  const s = myRows[i];
+  if (!s) return;
+  downloadSkill(s.id, s.isPublic !== false);
+}
+
+let cfgSkill = null;
+let cfgContacts = [];
+let cfgDefaultGoal = '';   // 员工设定的默认聊天目标，弹窗直接预填，用户不用手填
+let cfgStartContact = '';  // 起始联系人备注名；空串表示从第一个开始
+
+function updateCfgCount() {
+  const valid = cfgContacts.filter(c => (c.name || '').trim()).length;
+  $('skillcfg-count').textContent = `共 ${valid} 个联系人`;
+}
+
+function renderCfgContacts() {
+  const box = $('skillcfg-list');
+  box.innerHTML = '';
+  cfgContacts.forEach((c, i) => {
+    const row = document.createElement('div');
+    row.className = 'cfg-contact-row';
+    row.innerHTML = `
+      <span class="cfg-index">${i + 1}</span>
+      <input value="${(c.name||'').replace(/"/g,'&quot;')}" placeholder="备注名" onchange="cfgContacts[${i}].name=this.value.trim();updateCfgCount()">
+      <button class="btn danger" onclick="cfgContacts.splice(${i},1);renderCfgContacts()">删</button>`;
+    box.appendChild(row);
+  });
+  updateCfgCount();
+  renderStartSelect();
+}
+
+// 起始联系人下拉：默认项「从第一个开始」+ 当前名单各联系人
+function renderStartSelect() {
+  const sel = $('skillcfg-start');
+  if (!sel) return;
+  const names = cfgContacts.map(c => (c.name || '').trim()).filter(Boolean);
+  sel.innerHTML = '';
+  const def = document.createElement('option');
+  def.value = '';
+  def.textContent = '从第一个联系人开始（默认）';
+  sel.appendChild(def);
+  names.forEach(n => {
+    const o = document.createElement('option');
+    o.value = n;
+    o.textContent = n;
+    sel.appendChild(o);
+  });
+  sel.value = names.includes(cfgStartContact) ? cfgStartContact : '';
+}
+
+// 导出当前名单；保存框里可选 CSV/TXT/Excel/Word，格式与导入对齐、可回导
+async function exportContacts() {
+  // pywebview 桌面端：走 Python 原生「另存为」对话框（WebView2 不触发 blob 附件下载）
+  const api = window.pywebview && window.pywebview.api;
+  if (api && typeof api.export_contacts === 'function') {
+    try {
+      const r = await api.export_contacts('');
+      if (r && r.ok) {
+        toast('已导出：' + r.path);
+      } else if (r && r.canceled) {
+        // 用户在保存框点了取消，不提示
+      } else {
+        toast('导出失败：' + ((r && r.error) || ''));
+      }
+    } catch (e) {
+      toast('导出失败：' + e.message);
+    }
+    return;
+  }
+  // 浏览器兜底：blob 对象 URL 触发下载
+  try {
+    const r = await fetch('/api/contacts/export?format=csv');
+    if (!r.ok) {
+      const d = await r.json().catch(() => ({}));
+      toast('导出失败：' + (d.error || ''));
+      return;
+    }
+    const blob = await r.blob();
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'contacts_export.csv';
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+  } catch (e) {
+    toast('导出失败：' + e.message);
+  }
+}
+
+function addCfgContact() {
+  cfgContacts.push({name:'', chat_goal:''});
+  renderCfgContacts();
+}
+
+async function importContactFile(input) {
+  const f = input.files[0];
+  if (!f) return;
+  try {
+    const buf = await f.arrayBuffer();
+    const r = await fetch('/api/contacts/import?file=' + encodeURIComponent(f.name), {
+      method: 'POST',
+      body: buf
+    });
+    const d = await r.json();
+    if (!r.ok || !d.ok) { toast('导入失败：' + (d.error || '')); return; }
+    const imported = d.contacts || [];
+    if (!imported.length) { toast('文件里没解析到联系人'); return; }
+    // 合并去重（按姓名）
+    const exist = new Set(cfgContacts.map(c => c.name));
+    imported.forEach(c => { if (!exist.has(c.name)) { cfgContacts.push(c); exist.add(c.name); } });
+    renderCfgContacts();
+    toast(`已导入 ${imported.length} 个联系人`);
+  } catch (e) {
+    toast('导入失败：' + e.message);
+  }
+  input.value = '';
+}
+
+async function openSkillCfg(skill) {
+  cfgSkill = skill;
+  $('skillcfg-title').textContent = `配置：${skill.name}${skill.id ? ' · ID ' + skill.id : ''}`;
+  // 只有本机已下载的才给删除入口；员工广场里未下载的只是预览配置
+  const local = downloadedMap.has(skill.name);
+  const delBtn = $('skillcfg-del');
+  delBtn.style.visibility = local ? 'visible' : 'hidden';
+  delBtn.dataset.name = skill.name;
+  // 回填「上次用的联系人」必须从后端配置读：pywebview 里 localStorage 重启会丢，
+  // 之前就是靠 localStorage，导致每次重启弹窗都是空的、要重新手输。
+  let saved = [];
+  let savedObjective = '';
+  cfgStartContact = '';
+  try {
+    const c = await getConfig('contacts');
+    saved = (c.contacts || []).filter(x => (x.name || '').trim());
+    savedObjective = (c.default_chat_goal || '').trim();
+    cfgStartContact = (c.start_contact || '').trim();
+  } catch (e) { saved = []; }
+  // 聊天目标不用用户填：优先用上次落盘的全局默认，其次从员工策略里抽「核心目标」那一行
+  let strat = {};
+  try { strat = await getConfig('strategy'); } catch (e) { strat = {}; }
+  const m = String(strat.strategy_text || '').match(/核心目标[：:]\s*([^\n]+)/);
+  cfgDefaultGoal = savedObjective || (m ? m[1].trim().replace(/[。；;]+$/, '') : '');
+  cfgContacts = saved.length
+    ? saved.map(c => ({name: c.name, chat_goal: (c.chat_goal || '').trim()}))
+    : [{name:'', chat_goal:''}];
+  $('skillcfg-proactive').checked = !!strat.proactive_enabled;
+  renderCfgContacts();
+  // 弹窗不再放「聊天目标」输入框：目标直接沿用员工设定，这里只做一行说明
+  $('skillcfg-note').textContent = cfgDefaultGoal
+    ? `聊天目标沿用员工设定「${cfgDefaultGoal}」，无需填写`
+    : '';
+  $('skillcfg-mask').classList.add('show');
+}
+function closeSkillCfg() {
+  $('skillcfg-mask').classList.remove('show');
+  cfgSkill = null;
+}
+async function confirmSkillCfg() {
+  const picked = cfgContacts.filter(c => c.name);
+  if (!picked.length) { toast('请至少填写一个联系人名称'); return; }
+  // 弹窗里已经不显示聊天目标：沿用名单里已有的目标（空则由 default_chat_goal 统一继承）
+  const contacts = picked.map(c => ({name: c.name, chat_goal: (c.chat_goal || '').trim()}));
+  const proactive = $('skillcfg-proactive').checked;
+  const startContact = $('skillcfg-start').value.trim();
+  $('skillcfg-mask').classList.remove('show');
+  try {
+    const r = await fetch('/api/skills/activate', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({skill_name: cfgSkill.name, skill_id: cfgSkill.id || '', contacts: contacts, proactive: proactive,
+                            default_chat_goal: cfgDefaultGoal, start_contact: startContact})
+    });
+    const d = await r.json();
+    if (!r.ok) { toast('配置失败：' + (d.error || '')); return; }
+
+    // 先停掉旧进程再启动，否则 start 会返回 already running，
+    // 新填的联系人/开关就不会生效（之前重启后名单还是旧的，就是这个原因）。
+    try { await fetch('/api/monitor/stop', {method:'POST'}); } catch (e) {}
+    await new Promise(res => setTimeout(res, 800));
+    const sr = await fetch('/api/monitor/start', {method:'POST'});
+    const sd = await sr.json();
+    if (sd.ok) {
+      toast(`已启动 ${cfgSkill.name}，监控 ${contacts.length} 个联系人`);
+      // 同步到「聊天监控」表格和「策略配置」的主动开关，页面各处的名单保持一致
+      contactsData = {group_name: 'Default', strategy: '', default_chat_goal: cfgDefaultGoal,
+                      skill_name: cfgSkill.name, start_contact: startContact,
+                      contacts: contacts.map(c => ({name: c.name, gender: '未知', chat_goal: c.chat_goal || ''}))};
+      renderContactRows();
+      loadStrategy();
+      updateDashMeta();
+      go('live');
+    } else {
+      toast(`启动失败：${sd.error || ''}`);
+    }
+    // 激活后立刻回读落盘配置，让列表里的「当前使用」和副标题同步到位
+    await refreshActiveSkill();
+    await refreshStatus();
+  } catch(e) {
+    toast('失败：' + e.message);
+  }
+  cfgSkill = null;
+}
+
+function renderEmpGrid() {
+  const grid = $('emp-grid');
+  const q = ($('emp-search').value || '').trim().toLowerCase();
+  const cat = ($('emp-category') || {}).value || '__all';
+  let list = empAll;
+  // 分类口径 = tags 里的角色项（销售助手 / 顾问助手 / 聊天助手）
+  if (cat !== '__all') list = list.filter(s => classOf(s).role === cat);
+  if (q) list = list.filter(s =>
+    (s.name||'').toLowerCase().includes(q) || (s.description||'').toLowerCase().includes(q));
+  if (!list.length) {
+    grid.innerHTML = '<div class="muted">' + (
+      empAll.length === 0 ? '平台还没有微信可用的员工' :
+      q ? '没有匹配的员工，换个关键词试试' : '该分类下还没有员工'
+    ) + '</div>';
+    return;
+  }
+  grid.innerHTML = list.map(s => {
+    const cls = classOf(s);
+    const downloaded = downloadedNames.has(s.name) ||
+      JSON.parse(localStorage.getItem('downloaded_skills') || '[]').some(d => d.name === s.name);
+    const role = cls.isWechat ? (cls.role || '微信员工') : '通用';
+    const av = String(s.name || '?').trim().charAt(0) || '?';
+    return `
+    <div class="emp-card" onclick="openEmpDetail(${s.id})">
+      <div class="top">
+        <div class="avatar">${escapeHtml(av)}</div>
+        <div style="min-width:0">
+          <div class="nm">${s.name}${s.is_public ? '' : ' <span class="lock">🔒</span>'}</div>
+          <div style="margin-top:4px"><span class="badge tag">${escapeHtml(role)}</span>${cls.isOfficial ? ' <span class="badge tag">官方</span>' : ''}</div>
+        </div>
+      </div>
+      <div class="desc">${s.description||''}</div>
+      <div class="foot">
+        <span class="meta">${s.download_count || 0} 次下载</span>
+        ${downloadingId === String(s.id)
+          ? `<button class="btn ghost" data-emp="${s.id}" disabled><span class="dl-spin"></span>下载中</button>`
+          : `<button class="btn ${downloaded ? '' : 'ghost'}" data-emp="${s.id}" onclick="event.stopPropagation();empCardAction(this)">${downloaded ? '使用' : '下载'}</button>`}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// 员工广场卡片按钮：已下载 → 直接进入使用配置；未下载 → 下载
+function empCardAction(btn) {
+  const s = (empAll || []).find(x => String(x.id) === String(btn.dataset.emp));
+  if (!s) return;
+  if (downloadedNames.has(s.name)) openSkillCfg({ name: s.name, id: s.id, version: s.version });
+  else downloadSkill(s.id, s.is_public);
+}
+
+// ---------- 员工详情弹窗 ----------
+let edCurrent = null;
+
+function openEmpDetail(id) {
+  const s = (empAll || []).find(x => String(x.id) === String(id));
+  if (!s) return;
+  edCurrent = s;
+  const cls = classOf(s);
+  const downloaded = downloadedNames.has(s.name) ||
+    JSON.parse(localStorage.getItem('downloaded_skills') || '[]').some(d => d.name === s.name);
+
+  $('ed-avatar').textContent = (String(s.name || '?').trim().charAt(0)) || '?';
+  $('ed-name').textContent = s.name;
+  const role = cls.isWechat ? (cls.role || '微信员工') : '通用';
+  $('ed-sub').textContent = [role, s.is_public ? '公开' : '私密', '下载 ' + (s.download_count || 0)].join(' · ');
+  $('ed-purpose').textContent = s.description || '暂无介绍';
+  $('ed-overview').textContent = [
+    '版本 v' + (s.version || '-'),
+    s.creator_username || s.author || '匿名',
+    cls.isOfficial ? '官方' : ''
+  ].filter(Boolean).join(' · ');
+
+  const sceneBlock = $('ed-scene-block');
+  const sceneItems = [];
+  if (cls.role) sceneItems.push(cls.role);
+  if (cls.isPc) sceneItems.push('支持本地微信自动化');
+  if (sceneItems.length) {
+    sceneBlock.style.display = '';
+    $('ed-scene').innerHTML = sceneItems.map(t => `<li>${t}</li>`).join('');
+  } else {
+    sceneBlock.style.display = 'none';
+  }
+
+  const action = $('ed-action');
+  const del = $('ed-delete');
+  if (downloaded) {
+    del.style.display = '';
+    action.textContent = '使用';
+    action.onclick = () => { closeEmpDetail(); downloadSkill(s.id, s.is_public); };
+  } else {
+    del.style.display = 'none';
+    action.textContent = '下载';
+    action.onclick = () => downloadSkill(s.id, s.is_public);
+  }
+  $('emp-detail-mask').classList.add('show');
+}
+
+function closeEmpDetail() {
+  $('emp-detail-mask').classList.remove('show');
+  edCurrent = null;
+}
+
+function edDelete() {
+  if (!edCurrent) return;
+  const name = edCurrent.name;
+  closeEmpDetail();
+  deleteSkill(name);
+}
+
+async function downloadSkill(id, isPublic, shareCode='') {
+  if (downloadingId) { toast('已有下载任务进行中，请稍候'); return; }
+  const headers = { 'Authorization': 'Bearer ' + getToken() };
+  if (shareCode) headers['X-Share-Code'] = shareCode;
+  // empAll 是平台返回的数组，别再用 empAll.public/.private 拼（那两个属性不存在，
+  // 之前点「下载」会在这里抛 TypeError，什么提示都不给）
+  const skill = (empAll || []).find(s => String(s.id) === String(id));
+  const name = skill ? skill.name : '技能';
+  downloadingId = String(id);
+  console.log('下载', id, 'token长度=', getToken().length);
+  const refreshBtns = () => { try { renderEmpGrid(); renderMyRows(); } catch (e) {} };
+  // 详情弹窗打开时，其操作按钮也进入下载态，结束后还原
+  const act = $('ed-action');
+  const edVisible = act && $('emp-detail-mask')?.classList.contains('show');
+  let edOldHtml = '', edOldDisabled = false;
+  try {
+    dlStatus(`正在下载「${name}」，请稍候…`);
+    refreshBtns();
+    if (edVisible) {
+      edOldHtml = act.innerHTML; edOldDisabled = act.disabled;
+      act.disabled = true;
+      act.innerHTML = '<span class="dl-spin"></span>下载中…';
+    }
+    const resp = await fetch(`${SKILL_API}/skills/${id}/download`, { headers });
+    if (!resp.ok) {
+      let data = {};
+      try { data = await resp.json(); } catch(e) {}
+      // 私密员工：后端返回 403 + code_required，直接弹提取码框，不要先糊一个 alert
+      // （之前会先弹「下载失败 403: 提取码错误或缺失」，用户点掉才看到输入框，很蠢）
+      if (resp.status === 403 && data.code_required) {
+        pendingDownloadId = id;
+        pendingSkillName = name;
+        $('sharecode-tip').textContent = shareCode
+          ? `提取码不正确，请重新输入（${pendingSkillName || '该私密员工'}）。`
+          : `「${pendingSkillName || '该私密员工'}」是私密分享，请输入创建者给的提取码。`;
+        $('sharecode-mask').classList.add('show');
+        $('sharecode-input').value = '';
+        $('sharecode-input').focus();
+        return;
+      }
+      toast(`下载失败 ${resp.status}: ${data.error || resp.statusText}`, true);
+      return;
+    }
+    const blob = await resp.blob();
+
+    // 发给后端解压并自动配置策略（直接发二进制）
+    try {
+      dlStatus(`正在解压「${name}」并配置策略…`);
+      const installResp = await fetch(`/api/skills/install?name=${encodeURIComponent(name)}&skill_id=${encodeURIComponent(id)}`, {
+        method: 'POST',
+        body: blob
+      });
+      const installData = await installResp.json();
+      if (installResp.ok) {
+        localStorage.setItem('active_skill_id', id);
+        await renderMyList();
+        // 完成后引导用户去「我的员工」配置激活
+        toast(`「${name}」已下载完成：到「我的员工」点「使用」即可配置并激活`, 5000);
+        pulseMyempsEntry();
+      } else {
+        toast(`配置失败: ${installData.error || ''}`);
+      }
+    } catch(e) {
+      toast('解压失败: ' + e.message);
+    }
+
+    // 刷新「我的员工」：这一项会从「下载」变成「使用」并置顶
+    await renderMyList();
+    renderEmpGrid();
+  } catch (e) {
+    toast('下载失败：' + e.message, true);
+  } finally {
+    downloadingId = null;
+    dlStatus(null);
+    if (edVisible) { act.disabled = edOldDisabled; act.innerHTML = edOldHtml; }
+    refreshBtns();
+  }
+}
+
+// 删除已下载技能：移除本地记录与技能目录，聊天记忆保留
+async function deleteSkill(name) {
+  if (!name) return;
+  const d = await api('/api/skills/delete', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ name })
+  });
+  if (d && d.ok) {
+    toast(`已删除 ${name}`);
+    if (cfgSkill && cfgSkill.name === name) closeSkillCfg();
+    await renderMyList();
+    renderEmpGrid();
+  } else {
+    toast(`删除失败：${(d && d.error) || '未知原因'}`);
+  }
+}
+
+// 卡片三点更多菜单：同时只展开一个，点击卡片外部关闭
+function closeAllMenus() {
+  document.querySelectorAll('.card-menu.show').forEach(m => m.classList.remove('show'));
+}
+function toggleCardMenu(btn) {
+  const host = btn.closest('.menu-host');
+  const menu = host && host.querySelector('.card-menu');
+  if (!menu) return;
+  const wasOpen = menu.classList.contains('show');
+  closeAllMenus();
+  if (!wasOpen) menu.classList.add('show');
+}
+document.addEventListener('click', (e) => {
+  if (!e.target.closest('.menu-host')) closeAllMenus();
+});
+
+function closeShareCode() {
+  $('sharecode-mask').classList.remove('show');
+  pendingDownloadId = null;
+}
+function confirmShareCode() {
+  const code = ($('sharecode-input').value || '').replace(/\s+/g, '').toUpperCase();
+  if (!code || code.length < 4) { toast('提取码通常是 4 位，请检查'); return; }
+  $('sharecode-mask').classList.remove('show');
+  downloadSkill(pendingDownloadId, false, code);
+}
+
+// ---------- 面板导航 ----------
+const TITLES = {
+  dash: ['工作台', '运行总览与快捷控制'],
+  emp: ['员工广场', '微信可用的员工，下载后即可使用'],
+  myemps: ['我的员工', '微信可用的数字员工'],
+  live: ['实时监控', '自动跟踪最新日志，每 3 秒刷新'],
+  stats: ['聊天日报', '按员工查看当日聊天成果'],
+  moments: ['朋友圈', '立即发布与队列管理'],
+  settings: ['设置', '策略、节奏与维护'],
+};
+function go(name) {
+  document.querySelectorAll('[data-panel]').forEach(b => b.classList.toggle('active', b.dataset.panel === name));
+  document.querySelectorAll('.panel').forEach(p => p.classList.toggle('active', p.id === 'panel-' + name));
+  const t = TITLES[name];
+  if (t) { $('page-title').textContent = t[0]; $('page-sub').textContent = t[1]; }
+  if (name === 'settings') loadStrategy();
+  if (name === 'stats') loadStats();
+  if (name === 'live') pollLive();
+  if (name === 'myemps') refreshActiveSkill();
+}
+document.querySelectorAll('[data-panel]').forEach(b => { b.onclick = () => go(b.dataset.panel); });
+
+// ---------- 危险操作两步确认：第一次点击进入确认态，3 秒内再点才执行 ----------
+function dangerClick(btn) {
+  const lbl = btn.querySelector('.lbl');
+  if (!btn.classList.contains('armed')) {
+    document.querySelectorAll('.armed').forEach(disarmDanger);
+    btn.classList.add('armed');
+    if (lbl) { btn._lblOld = lbl.textContent; lbl.textContent = '再点一次确认' + (btn.dataset.danger || ''); }
+    btn._dangerTm = setTimeout(() => disarmDanger(btn), 3000);
+  } else {
+    disarmDanger(btn);
+    runDangerAction(btn);
+  }
+}
+function disarmDanger(btn) {
+  clearTimeout(btn._dangerTm);
+  btn.classList.remove('armed');
+  const lbl = btn.querySelector('.lbl');
+  if (lbl && btn._lblOld) lbl.textContent = btn._lblOld;
+}
+function runDangerAction(btn) {
+  const a = btn.dataset.action;
+  if (a === 'stop-monitor') stopMonitorConfirm();
+  else if (a === 'clean-shots') cleanScreenshots();
+  else if (a === 'clean-logs') cleanLogs();
+  else if (a === 'del-skill') deleteSkill(btn.dataset.name);
+  else if (a === 'del-detail') edDelete();
+}
+document.addEventListener('click', e => {
+  const btn = e.target.closest('[data-danger]');
+  if (btn) dangerClick(btn);
+});
+
+// ---------- 主动策略开关（灰阶 switch 与隐藏 checkbox 同步） ----------
+function setProactive(v) {
+  $('s-proactive').checked = !!v;
+  $('s-proactive-sw').classList.toggle('on', !!v);
+}
+
+// ---------- 工作台元信息 ----------
+function updateDashMeta() {
+  const cs = (contactsData.contacts || []).filter(c => c.name);
+  $('dash-contacts-n').textContent = cs.length;
+  $('dash-skill-name').textContent = contactsData.skill_name || '未激活';
+}
+
+// ---------- init ----------
+$('stats-date').value = new Date().toISOString().slice(0,10);
+refreshStatus();
+// 一开页就把「当前使用」员工写进副标题，不依赖后面异步加载的先后顺序
+loadContacts().then(() => refreshActiveSkill());
+loadQueue();
+loadStrategy();
+loadUserConfig();
+loadStats();
+initToken().then(() => loadEmployees());
+pollLive();
+
+// 自动刷新：检测 index.html 修改时间
+let _hm = null;
+setInterval(async () => {
+  try {
+    const r = await fetch('/api/version');
+    const d = await r.json();
+    if (_hm === null) _hm = d.mtime;
+    else if (d.mtime !== _hm) location.reload();
+  } catch(e) {}
+}, 2000);
+</script>
+</body>
+</html>

@@ -1,0 +1,13 @@
+# WeChatRPA runtime artifacts (regenerated on every run)
+runtime/logs/
+runtime/screenshots/
+runtime/conversation_memory/
+runtime/events/
+runtime/__pycache__/
+runtime/_crops/
+runtime/_probe_tmp/
+runtime/monitor.pid
+# Local scratch / diagnostic scripts
+runtime/_*.py
+# NOTE: runtime/user_config.json is tracked and contains the API key.
+# If the key is sensitive, rotate it and switch to user_config.local.json.
